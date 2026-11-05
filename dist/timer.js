@@ -32,7 +32,7 @@ export function timerHTML() {
     <p class="timer-status sr-only" role="status" aria-live="polite"></p>
     <div class="timer-setup"><label class="timer-duration">독서 시간 <span><input name="timerMinutes" aria-label="독서 시간 (분)" type="number" min="1" max="1440" step="1" inputmode="numeric" value="${timer.minutes}">분</span></label>
       <input class="timer-slider" aria-label="독서 시간 슬라이더 (분)" type="range" min="1" max="${Math.max(60,timer.minutes)}" step="1" value="${timer.minutes}">
-      <div class="timer-presets">${[15,30,45,60].map(n=>`<button type="button" data-minutes="${n}">${n}분</button>`).join('')}</div>
+      <div class="timer-presets">${[15,30,60].map(n=>`<button type="button" data-minutes="${n}">${n}분</button>`).join('')}<button type="button" data-timer-estimate title="오늘 독서 계획 · 시간당 30쪽 기준">예상 시간</button></div>
     </div>
     <button type="button" class="secondary timer-reset">시간 다시 설정</button>
     <p class="timer-lock sr-only" aria-live="polite"></p>
@@ -41,7 +41,7 @@ export function timerHTML() {
 }
 const play = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5v14l11-7z" fill="currentColor"/></svg>';
 const pause = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h4v14H7zm6 0h4v14h-4z" fill="currentColor"/></svg>';
-export function mountTimer(root) {
+export function mountTimer(root,getEstimatedMinutes=()=>0) {
   const panel = root.querySelector('.reading-timer'), center=panel.querySelector('.timer-center'), number=panel.querySelector('[name=timerMinutes]'), slider=panel.querySelector('.timer-slider');
   const alignClock = () => panel.style.setProperty('--timer-nav-height', (document.querySelector('nav')?.getBoundingClientRect().height || 84)+'px');
   alignClock();window.addEventListener('resize',alignClock);
@@ -110,6 +110,7 @@ export function mountTimer(root) {
   number.onblur=()=>{number.value=timer.minutes;center.disabled=false;};
   slider.oninput=()=>{center.disabled=false;setMinutes(Number(slider.value));};
   panel.querySelectorAll('[data-minutes]').forEach(el=>el.onclick=()=>{center.disabled=false;setMinutes(Number(el.dataset.minutes));});
+  panel.querySelector('[data-timer-estimate]').onclick=()=>{if(timer.status!=='idle')return;const minutes=getEstimatedMinutes();if(Number.isInteger(minutes)&&minutes>0&&minutes<=1440){center.disabled=false;setMinutes(minutes);}};
   function reset() {timer.status='idle';timer.remaining=timer.minutes*60000;timer.endsAt=null;number.value=timer.minutes;slider.value=timer.minutes;save();draw();}
   panel.querySelector('.timer-reset').onclick=reset;
   center.onclick=()=>{
