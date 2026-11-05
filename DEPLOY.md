@@ -6,7 +6,7 @@ GitHub 저장소는 `KimDomi/reading-calendar`로 변경됐고 배포 브랜치�
 
 ## 이름 변경 마무리
 
-앱 표시 이름은 `reading-calendar`로 변경했다. 외부 서비스의 이름과 연결은 계정 관리 권한으로 변경해야 한다.
+앱 표시 이름은 `독서 달력`이다. 저장소·Worker 식별자는 `reading-calendar`로 유지한다.
 
 1. GitHub 저장소 이름은 `reading-calendar`로 변경됐다. 다른 로컬 복제본도 origin을 변경한다.
 
@@ -16,7 +16,7 @@ GitHub 저장소는 `KimDomi/reading-calendar`로 변경됐고 배포 브랜치�
 
 2. Cloudflare의 기존 Worker를 `reading-calendar`로 이름 변경했다. 이 Worker의 빌드 설정과 Git 연결을 확인한다.
    - 빌드 명령: `node scripts-versions.mjs`
-   - 배포 명령: `npx wrangler deploy`
+   - 배포 명령: `npm run deploy` (기존 `npx wrangler deploy`도 프로젝트에 설치된 Wrangler를 사용한다.)
    - 기존 명령에 남은 `--name fff`는 사용하지 않는다.
    - 프리뷰 빌드를 사용한다면 업로드 명령: `npx wrangler versions upload`
    - 준비해 둔 `wrangler.reading-calendar.jsonc`도 같은 이름을 사용하므로 해당 설정을 지정한 기존 명령은 그대로 사용할 수 있다.
@@ -41,3 +41,11 @@ GitHub 저장소는 `KimDomi/reading-calendar`로 변경됐고 배포 브랜치�
 
 `node scripts-versions.mjs`로 캐시 버전을 갱신하고 `npm run check`로 기존 기능과 백업 호환성을 검증한다.
 배포 후 설정 탭, 화면 모드 전환, 새 독서 계획의 색상 선택을 확인한다.
+
+## npm 캐시 오류 대응
+
+`ENOENT ... /opt/buildhome/.npm/_cacache/...` 오류가 배포 도구 실행 단계에서 발생한 적이 있다.
+프로젝트에 Wrangler 버전을 고정해 배포 중 `npx`의 즉석 도구 설치를 없앴고, `.npmrc`의 캐시는 작업 디렉터리 아래 `.npm-cache`로 분리했다. 무결성 검사는 유지한다.
+
+Cloudflare에 오래된 빌드가 대기 중이면 최신 수정 커밋을 새로 빌드한다. 오래된 커밋의 재시도는 새 설정을 포함하지 않는다.
+캐시 복원 오류가 계속되면 Cloudflare의 빌드 캐시 비우기 기능으로 캐시를 초기화하고 최신 커밋을 재시도한다.

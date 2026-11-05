@@ -8,13 +8,15 @@
     "test": "node --experimental-vm-modules test-startup.mjs && node test.mjs && node test-backup.mjs && node test-palette.mjs && node test-timer.mjs && node test-holidays.mjs && node test-rest-days.mjs && node test-progress-check.mjs && node test-time-picker.mjs && node test-native.mjs",
     "check": "node --check dist/app.js && npm test",
     "version-assets": "node scripts-versions.mjs",
+    "deploy": "wrangler deploy",
     "android:sync": "node scripts-versions.mjs && cap sync android",
     "android:open": "cap open android",
     "android:debug": "npm run android:sync && cd android && ./gradlew assembleDebug && node ../scripts-android-artifact.mjs"
   },
   "devDependencies": {
     "@capacitor/cli": "8.6.0",
-    "date-holidays": "3.38.0"
+    "date-holidays": "3.38.0",
+    "wrangler": "4.157.0"
   },
   "dependencies": {
     "@capacitor/android": "8.6.0",
