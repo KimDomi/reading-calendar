@@ -31,7 +31,7 @@ export function timerHTML() {
     <p class="timer-status sr-only" role="status" aria-live="polite"></p>
     <div class="timer-setup"><label class="timer-duration">독서 시간 <span><input name="timerMinutes" aria-label="독서 시간 (분)" type="number" min="1" max="1440" step="1" inputmode="numeric" value="${timer.minutes}">분</span></label>
       <input class="timer-slider" aria-label="독서 시간 슬라이더 (분)" type="range" min="1" max="${Math.max(60,timer.minutes)}" step="1" value="${timer.minutes}">
-      <div class="timer-presets">${[15,25,45,60].map(n=>`<button type="button" data-minutes="${n}">${n}분</button>`).join('')}</div>
+      <div class="timer-presets">${[15,30,45,60].map(n=>`<button type="button" data-minutes="${n}">${n}분</button>`).join('')}</div>
     </div>
     <button type="button" class="secondary timer-reset">시간 다시 설정</button>
     <p class="timer-lock sr-only" aria-live="polite"></p>

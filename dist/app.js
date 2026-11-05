@@ -1,4 +1,4 @@
-import {timerHTML,mountTimer} from './timer.js?v=ef198292f0a6';
+import {timerHTML,mountTimer} from './timer.js?v=97d60ccce02d';
 import {holidays} from './holidays.js?v=e4f0f7db7f96';
 import {mountColorPicker} from './color-picker.js?v=868d08b6d8c5';
 import {bookPalette} from './palette.js?v=f34764add534';
