@@ -19,7 +19,7 @@
 
 .settings-card.appearance-card{padding-block:20px}.settings-card h2{line-height:1.5}.data-card .settings-title{position:relative;min-height:24px;padding-right:44px}.data-card .info-help{position:absolute;right:0;top:50%;transform:translateY(-50%)}.data-card>.add{margin-top:12px}
 
-nav button>span{display:flex;align-items:center;justify-content:center;height:30px}nav svg{width:19px;height:19px;flex-shrink:0}nav [data-tab=timer]>span{font-size:33.075px;line-height:30px}
+nav button>span{display:flex;align-items:center;justify-content:center;height:30px}nav svg{width:19px;height:19px;flex-shrink:0}nav [data-tab=timer]>span{font-size:33.075px;line-height:30px;transform:translateY(-2px)}
 
 .reading-timer .timer-setup,.reading-timer .timer-reset{margin-top:24px}.reading-timer .timer-status:not(.sr-only){font-size:16px;color:var(--text);margin:24px 0 0}
 
