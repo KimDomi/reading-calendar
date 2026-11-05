@@ -1,5 +1,5 @@
 import {bookPalette} from './palette.js?v=f34764add534';
-import {settings,settingsHTML,updateSetting} from './settings.js?v=6db67b4a609a';
+import {settings,settingsHTML,updateSetting} from './settings.js?v=a72e2a4d08f4';
 import {makeBackup,parseBackup,mergeBackup,validateData} from './backup.js?v=a7d0c41fa13a';
 import {add,days,recalc,record,recordMany,graph,recommendation,moveBook,isDaily,deadlineMisses} from './engine.js?v=b836377baf9e';
 const today=()=>{let d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`},$=s=>document.querySelector(s),esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),short=d=>`${Number(d.slice(5,7))}/${Number(d.slice(8))}`;

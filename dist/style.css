@@ -4,6 +4,8 @@
 
 [hidden]{display:none!important}
 
+.appearance-card{padding-block:16px}.appearance-card .theme-options{margin:12px 0 0}.appearance-card .theme-option{flex-direction:row;justify-content:center;gap:6px;padding:10px 4px;min-height:44px}.appearance-card .theme-symbol{font-size:20px}
+
 .day{align-items:flex-start;text-align:left;padding:8px}.day .marks{align-self:center}
 
 #bookform{display:grid;gap:20px}#bookform .field,#bookform .choice-field,#bookform .book-colors,#bookform p,#bookform .cancel{margin:0}#bookform .field,#bookform legend{font-size:12px;line-height:1.5;color:var(--muted)}#bookform legend{padding:0;margin-bottom:8px}#bookform .field>input{margin-top:8px;min-height:46px}#bookform .two{gap:14px}#bookform .color-options{padding-block:5px}#bookform p:empty{display:none}#bookform .cancel{padding-block:4px}
