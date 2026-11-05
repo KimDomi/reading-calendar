@@ -1,4 +1,4 @@
-import {mountColorPicker} from './color-picker.js?v=0f0eb81ed37f';
+import {mountColorPicker} from './color-picker.js?v=868d08b6d8c5';
 import {bookPalette} from './palette.js?v=f34764add534';
 import {settings,settingsHTML,updateSetting} from './settings.js?v=810124dc30f6';
 import {makeBackup,parseBackup,mergeBackup,validateData} from './backup.js?v=a7d0c41fa13a';
