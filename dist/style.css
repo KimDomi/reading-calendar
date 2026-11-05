@@ -4,6 +4,8 @@
 
 [hidden]{display:none!important}
 
+#toast{text-align:center;width:max-content;max-width:calc(100% - 40px);padding:14px 20px;border:1px solid #ffffff12;border-radius:16px;line-height:1.6;box-shadow:0 8px 28px #0003}#toast button{display:block;width:100%;margin:10px 0 0;padding:8px 16px;min-height:40px;border-radius:9px;background:#ffffff12;color:#e0efda;text-decoration:none;font-weight:650}#toast button:hover{background:#ffffff20}#toast button:focus-visible{outline:2px solid #d9edc6;outline-offset:2px}
+
 .plan-group>.book>.bookrow{min-height:99px}.plan-group>.empty{min-height:104px;margin:10px 0;padding:15px 12px;display:grid;place-items:center}
 
 #main>.settings-card:first-child{margin-top:0}
