@@ -1,15 +1,14 @@
 # reading-calendar 배포
 
 Cloudflare Worker 이름은 `reading-calendar`이며, 기본 `wrangler.jsonc`도 같은 이름으로 맞췄다.
-마지막 확인 화면의 Git 연결은 `KimDomi/fff`의 `main`이다. GitHub 저장소 이름 변경 후 연결도 확인한다.
+GitHub 저장소는 `KimDomi/reading-calendar`로 변경됐고 배포 브랜치는 `main`이다. Cloudflare의 Git 연결 표시도 확인한다.
 이전 주소는 https://fff.waffle4843.workers.dev 이다. 이름 변경 후 이 주소가 계속 동작한다고 가정하지 않는다.
 
 ## 이름 변경 마무리
 
 앱 표시 이름은 `reading-calendar`로 변경했다. 외부 서비스의 이름과 연결은 계정 관리 권한으로 변경해야 한다.
 
-1. GitHub https://github.com/KimDomi/fff/settings 의 Repository name을 `reading-calendar`로 변경한다.
-   GitHub는 이전 저장소 URL을 새 URL로 연결하지만, 로컬 origin도 변경한다.
+1. GitHub 저장소 이름은 `reading-calendar`로 변경됐다. 다른 로컬 복제본도 origin을 변경한다.
 
    ```sh
    git remote set-url origin https://github.com/KimDomi/reading-calendar.git
