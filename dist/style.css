@@ -139,6 +139,8 @@ html .appearance-card .theme-option{font-size:12px;min-width:0;gap:5px}
 html .appearance-card .theme-option>span{white-space:nowrap}
 html .appearance-card .theme-symbol{font-size:18px;flex-shrink:0}
 
+.settings-section>summary{padding:6px 16px;min-height:56px;line-height:24px}.settings-section>summary::after{display:none}.settings-expander{display:grid;place-items:center;width:44px;height:44px;flex-shrink:0;margin-left:auto;color:var(--muted)}.settings-section[open]>summary .settings-expander>.ui-icon{transform:rotate(180deg)}.settings-card.data-card{padding:0}.data-card .settings-title{min-height:56px;padding:6px 16px}.data-card .settings-title h2{font-weight:650;line-height:24px}.data-card .info-help{position:static;transform:none}.data-card .settings-content>.add{margin:0}
+
 .hsv-picker .hsv-channels{gap:6px;margin:10px 0}.hsv-picker .hsv-actions{margin-top:12px}.timer-color-picker .timer-color-presets{grid-template-columns:repeat(5,44px);justify-content:space-between}.timer-color-picker .timer-color-presets button{width:44px;height:44px}.timer-color-picker .hsv-picker{margin-top:12px}.timer-color-picker .hsv-preview{width:100%;height:72px;border-radius:10px}.timer-color-picker .hsv-hex{font-size:12px}.timer-color-picker .hsv-picker>.row:first-child{flex-direction:column;align-items:stretch;gap:8px}.timer-color-picker .hsv-picker>.row:first-child strong{font-size:12px}.timer-color-picker .timer-color-presets{margin-top:12px}
 
 /* Compact time picker: keep touch targets large while reducing the clock and gaps. */
