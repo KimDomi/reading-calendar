@@ -7,6 +7,13 @@ try {
 export function remainingTime(state, now = Date.now()) {
   return Math.max(0, Math.min(state.minutes * 60000, state.status === 'running' ? state.endsAt - now : state.remaining));
 }
+export function sectorPath(fraction) {
+  if (fraction <= 0) return '';
+  if (fraction >= 1) return 'M50 0 A50 50 0 1 1 50 100 A50 50 0 1 1 50 0 Z';
+  const angle = fraction * Math.PI * 2;
+  const x = 50 + 50 * Math.sin(angle), y = 50 - 50 * Math.cos(angle);
+  return `M50 50 L50 0 A50 50 0 ${fraction > .5 ? 1 : 0} 1 ${x} ${y} Z`;
+}
 let saveFailed = false;
 function save() {try {localStorage.setItem(storageKey, JSON.stringify(timer));saveFailed=false;} catch {saveFailed=true;}}
 function finishIfNeeded() {
@@ -17,7 +24,7 @@ export function timerHTML() {
   return `<section class="reading-timer" aria-label="독서 타이머">
     <p class="timer-caption">시간을 내려놓고, 책 속으로.</p>
     <div class="timer-clock">
-      <div class="timer-sector" aria-hidden="true"></div>
+      <svg class="timer-sector" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="50" class="timer-sector-base"/><path class="timer-wedge"/></svg>
       <div class="timer-ticks" aria-hidden="true">${Array.from({length:60},(_,i)=>`<i class="${i%5===0?'major':''}" style="--tick:${i*6}deg"></i>`).join('')}</div>
       <div class="timer-numbers" aria-hidden="true">${Array.from({length:4},(_,i)=>{const a=i*Math.PI/2;return `<span style="left:${50+39*Math.sin(a)}%;top:${50-39*Math.cos(a)}%">${i*timer.minutes/4}</span>`}).join('')}</div>
       <button class="timer-center" type="button" aria-label="타이머 시작"></button>
@@ -37,7 +44,18 @@ const play = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5v14l11-7z
 const pause = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h4v14H7zm6 0h4v14h-4z" fill="currentColor"/></svg>';
 export function mountTimer(root) {
   const panel = root.querySelector('.reading-timer'), center=panel.querySelector('.timer-center'), number=panel.querySelector('[name=timerMinutes]'), slider=panel.querySelector('.timer-slider');
-  let disposed=false, lock=null, attempted=false, lockEpoch=0;
+  let disposed=false, lock=null, attempted=false, lockEpoch=0, animation=null;
+  function paintSector() {
+    const fraction=remainingTime(timer)/(timer.minutes*60000);
+    panel.querySelector('.timer-wedge').setAttribute('d',sectorPath(fraction));
+  }
+  function animate() {
+    animation=null;
+    if(disposed||timer.status!=='running')return;
+    paintSector();
+    if(remainingTime(timer)===0){draw();return;}
+    animation=requestAnimationFrame(animate);
+  }
   const lockStatus=panel.querySelector('.timer-lock');
   async function updateLock() {
     if (timer.status !== 'running' || document.hidden || disposed) {
@@ -62,7 +80,9 @@ export function mountTimer(root) {
     const started=timer.status!=='idle', running=timer.status==='running';
     panel.classList.toggle('timer-started',started);
     panel.classList.toggle('timer-running',running);
-    panel.querySelector('.timer-sector').style.setProperty('--angle',(remainingTime(timer)/(timer.minutes*60000)*360)+'deg');
+    paintSector();
+    if(running&&animation===null)animation=requestAnimationFrame(animate);
+    else if(!running&&animation!==null){cancelAnimationFrame(animation);animation=null;}
     panel.querySelectorAll('.timer-numbers span').forEach((el,i)=>{el.textContent=i===0?String(timer.minutes):String(i*timer.minutes/4)});
     panel.querySelector('.timer-setup').hidden=started;
     panel.querySelector('.timer-reset').hidden=!started;
@@ -93,5 +113,5 @@ export function mountTimer(root) {
     save();draw();
   };
   draw();const interval=setInterval(draw,1000);
-  return ()=>{disposed=true;clearInterval(interval);updateLock();};
+  return ()=>{disposed=true;clearInterval(interval);if(animation!==null)cancelAnimationFrame(animation);updateLock();};
 }
