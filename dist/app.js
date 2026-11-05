@@ -3,7 +3,7 @@ import {timerHTML,mountTimer} from './timer.js?v=97d60ccce02d';
 import {holidays} from './holidays.js?v=e4f0f7db7f96';
 import {mountColorPicker} from './color-picker.js?v=868d08b6d8c5';
 import {bookPalette} from './palette.js?v=f34764add534';
-import {settings,settingsHTML,updateSetting} from './settings.js?v=a7da413d35fa';
+import {settings,settingsHTML,updateSetting} from './settings.js?v=f0f8a529098f';
 import {makeBackup,parseBackup,mergeBackup,validateData} from './backup.js?v=aadd9e0be72e';
 import {add,days,recalc,record,recordMany,graph,recommendation,moveBook,isDaily,deadlineMisses} from './engine.js?v=cab576a36d57';
 const today=()=>{let d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`},$=s=>document.querySelector(s),esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),short=d=>`${Number(d.slice(5,7))}/${Number(d.slice(8))}`;
