@@ -7,8 +7,8 @@ async function run(initial){
  const elements=new Map([['#main',main],['#modal h2',{setAttribute(){}}],['header h1',header],['#modal',modal],['#backupfile',file],['#toast',{style:{},innerHTML:''}]]);
  const local=new Map(initial?[['reading-calendar-v1',JSON.stringify(initial)]]:[]);
  const context=vm.createContext({console,Date,Map,Set,Math,Number,String,JSON,Error,Array,RegExp,structuredClone,crypto:{randomUUID:()=> 'test'},setTimeout:()=>1,clearTimeout:()=>{},localStorage:{getItem:k=>local.get(k)||null,setItem:(k,v)=>local.set(k,v)},document:{querySelector:s=>elements.get(s)||{},querySelectorAll:()=>[],addEventListener:(name,fn)=>{handlers[name]??=[];handlers[name].push(fn)}}});
- const cache=new Map();async function load(file){if(cache.has(file))return cache.get(file);const mod=new vm.SourceTextModule(fs.readFileSync(new URL(file,root),'utf8'),{context,identifier:file});cache.set(file,mod);await mod.link(spec=>load(spec.slice(2).split('?')[0]));return mod}
- const mod=await load('app.js');await mod.evaluate();assert.ok(main.innerHTML.includes('class="grid"'));
+ const cache=new Map();async function load(file){if(cache.has(file))return cache.get(file);const mod=new vm.SourceTextModule(fs.readFileSync(new URL(file,root),'utf8'),{context,identifier:file});cache.set(file,mod);return mod}
+ const mod=await load('app.js');await mod.link(spec=>load(spec.slice(2).split('?')[0]));await mod.evaluate();assert.ok(main.innerHTML.includes('class="grid"'));
  const click=dataset=>{for(const fn of handlers.click)fn({target:{closest:()=>({dataset})}})};
  click({tab:'plans'});assert.ok(main.innerHTML.includes('동시에 읽는 책'));assert.ok(!main.innerHTML.includes('data-action="backup"'));
  click({tab:'settings'});assert.ok(main.innerHTML.includes('내보내기 / 가져오기'));assert.equal(header.textContent,'설정');assert.equal((main.innerHTML.match(/data-action="backup"/g)||[]).length,1);

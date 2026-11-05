@@ -1,3 +1,4 @@
+import {isRestDay,readingDays} from './rest-days.js?v=270c12ac63f1';
 const DAY_MS = 86400000;
 const dayNumber = date => Math.floor(Date.parse(date + 'T12:00:00Z') / DAY_MS);
 export const add = (date, amount) => {
@@ -10,13 +11,14 @@ export const isDaily = book => book.basis === 'daily';
 
 // Deadline books may share a boundary day. Fixed daily books always keep their
 // own quota, and the next book starts the following day.
-function allocateQueue(books, start) {
+function allocateQueue(books, start, restDays = {}) {
   const queue = books.map(book => ({
     ...book, left: book.total - book.page, pos: book.page,
     deadlineDay: isDaily(book) ? null : dayNumber(book.deadline),
-  })).filter(book => book.left > 0);
+  })).filter(book => book.left > 0 && (isDaily(book)||readingDays(start,book.deadline,restDays)>0));
   const result = [];
-  let head = 0, date = start, day = dayNumber(start);
+  let head = 0, date = start, readingIndex = 0;
+  const availability = new Map(queue.filter(b=>!isDaily(b)).map(b=>[b.deadline,readingDays(start,b.deadline,restDays)]));
   function take(book, amount) {
     result.push({id: book.id, date, from: book.pos + 1, to: book.pos + amount, n: amount});
     book.pos += amount;
@@ -24,6 +26,7 @@ function allocateQueue(books, start) {
     if (book.left === 0) head++;
   }
   while (head < queue.length) {
+    if(isRestDay(date,restDays)){date=add(date,1);continue;}
     const front = queue[head];
     if (isDaily(front)) {
       const quota = Number(front.dailyPages);
@@ -38,7 +41,7 @@ function allocateQueue(books, start) {
         if (isDaily(book)) fixedDays += Math.ceil(book.left / book.dailyPages);
         else {
           pages += book.left;
-          budget = Math.max(budget, Math.ceil(pages / Math.max(1, book.deadlineDay - day + 1 - fixedDays)));
+          budget = Math.max(budget, Math.ceil(pages / Math.max(1, availability.get(book.deadline) - readingIndex - fixedDays)));
         }
       }
       while (budget > 0 && head < queue.length && !isDaily(queue[head])) {
@@ -48,20 +51,20 @@ function allocateQueue(books, start) {
       }
     }
     date = add(date, 1);
-    day++;
+    readingIndex++;
   }
   return result;
 }
-export function allocate(books, start) { return allocateQueue(books, start); }
-export function allocateMixed(books, start) { return allocateQueue(books, start); }
+export function allocate(books, start, restDays) { return allocateQueue(books, start, restDays); }
+export function allocateMixed(books, start, restDays) { return allocateQueue(books, start, restDays); }
 
 export function recalc(state, ids, today, start = today) {
   const affected = new Set(ids);
   state.alloc = state.alloc.filter(row => !affected.has(row.id) || row.date < start);
   const active = state.books.filter(book => affected.has(book.id) && book.status === 'active' && (isDaily(book) || book.deadline >= start));
   const append = rows => { for (const row of rows) state.alloc.push(row); };
-  for (const book of active) if (book.mode === 'parallel') append(allocateMixed([book], start));
-  append(allocateMixed(active.filter(book => book.mode === 'sequence').sort((a, b) => a.order - b.order), start));
+  for (const book of active) if (book.mode === 'parallel') append(allocateMixed([book], start, state.restDays));
+  append(allocateMixed(active.filter(book => book.mode === 'sequence').sort((a, b) => a.order - b.order), start, state.restDays));
 }
 
 export function deadlineMisses(books, allocations) {
@@ -114,11 +117,11 @@ export function graph(records, id) {
   return result;
 }
 
-export function recommendation(books, start) {
+export function recommendation(books, start, restDays) {
   const current = books.filter(book => book.status === 'active' && book.mode === 'sequence' && (isDaily(book) || book.deadline >= start)).sort((a, b) => a.order - b.order);
   const dated = current.filter(book => !isDaily(book));
   if (current.length < 2 || !dated.length) return null;
-  const schedule = allocateMixed(current, start);
+  const schedule = allocateMixed(current, start, restDays);
   if (!dated.some((book, i) => i > 0 && dated[i - 1].deadline > book.deadline) && !deadlineMisses(current, schedule).length) return null;
   const suggested = [...current].sort((a, b) => Number(isDaily(a)) - Number(isDaily(b)) || (!isDaily(a) ? a.deadline.localeCompare(b.deadline) : 0) || a.order - b.order);
   if (current.every((book, i) => book.id === suggested[i].id)) return null;
@@ -127,7 +130,7 @@ export function recommendation(books, start) {
     for (const row of rows) { const n = (totals.get(row.date) || 0) + row.n; totals.set(row.date, n); max = Math.max(max, n); }
     return max;
   };
-  return {current, suggested, before: peak(schedule), after: peak(allocateMixed(suggested, start))};
+  return {current, suggested, before: peak(schedule), after: peak(allocateMixed(suggested, start, restDays))};
 }
 
 export function moveBook(state, id, group, today) {

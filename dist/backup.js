@@ -1,4 +1,5 @@
-import {recalc} from './engine.js?v=b836377baf9e';
+import {recalc} from './engine.js?v=cab576a36d57';
+import {normalizeRestDays} from './rest-days.js?v=270c12ac63f1';
 const date=x=>typeof x==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(x)&&!Number.isNaN(Date.parse(x+'T12:00:00Z'))&&new Date(x+'T12:00:00Z').toISOString().slice(0,10)===x;
 const integer=(x,min,max)=>Number.isInteger(x)&&x>=min&&x<=max;
 const fail=()=>{throw Error('독서 백업 파일의 형식이나 데이터가 올바르지 않아요. 원본 파일을 확인해 주세요.')};
@@ -14,7 +15,7 @@ export function validateData(data){
  });
  const records=data.records.map(r=>{let b=ids.get(r?.id);if(!b||!date(r.date)||!integer(r.page,0,b.total)||!integer(r.delta,0,r.page))fail();return {id:r.id,date:r.date,page:r.page,delta:r.delta}});
  const alloc=data.alloc.map(a=>{let b=ids.get(a?.id);if(!b||!date(a.date)||!integer(a.from,1,100000)||!integer(a.to,a.from,100000)||a.n!==a.to-a.from+1)fail();return {id:a.id,date:a.date,from:a.from,to:a.to,n:a.n}});
- return {books,records,alloc};
+ return {books,records,alloc,...(data.restDays?{restDays:normalizeRestDays(data.restDays)}:{})};
 }
 export function makeBackup(state,at=new Date().toISOString()){return {app:'reading-calendar',version:1,exportedAt:at,data:validateData(state)}}
 export function parseBackup(text){let b;try{b=JSON.parse(text)}catch{throw Error('파일을 읽을 수 없어요. 독서 달력에서 내보낸 JSON 파일을 선택해 주세요.')}

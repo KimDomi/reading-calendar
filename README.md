@@ -15,6 +15,10 @@ npm run check
 
 The product direction and release gates are tracked in [`ROADMAP.md`](ROADMAP.md).
 
+## Reading rest days
+
+Settings support weekly rest days, optional Korean public holidays, and dated overrides (`rest` / `read`). Date overrides take priority. These scheduling preferences are stored with reading data and included in JSON backups; merging keeps the current preferences. Changing them recalculates allocations from today and preserves earlier allocations and all records. At least one weekly reading day must remain available. Deadline plans without any available reading days show a warning instead of receiving allocations.
+
 ## Source
 
 - `dist/app.js`: UI, interactions and derived display indexes. Rebuild display

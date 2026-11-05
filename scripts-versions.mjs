@@ -3,12 +3,16 @@ import './scripts-holidays.mjs';
 import {readFileSync,writeFileSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 const digest=name=>createHash('sha256').update(readFileSync('dist/'+name)).digest('hex').slice(0,12);
+const holidaysVersion=digest('holidays.js');
+let rest=readFileSync('dist/rest-days.js','utf8').replace(/from '\.\/holidays\.js(?:\?[^']*)?'/,"from './holidays.js?v="+holidaysVersion+"'");writeFileSync('dist/rest-days.js',rest);
+const restVersion=digest('rest-days.js');
+for(const name of ['engine.js','backup.js','settings.js','app.js']){const source=readFileSync('dist/'+name,'utf8').replace(/from '\.\/rest-days\.js(?:\?[^']*)?'/,"from './rest-days.js?v="+restVersion+"'");writeFileSync('dist/'+name,source);}
 const engineVersion=digest('engine.js');
 let backup=readFileSync('dist/backup.js','utf8').replace(/from '\.\/engine\.js(?:\?[^']*)?'/,"from './engine.js?v="+engineVersion+"'");writeFileSync('dist/backup.js',backup);
 const backupVersion=digest('backup.js');
 const settingsVersion=digest('settings.js'),paletteVersion=digest('palette.js');
 const colorPickerVersion=digest('color-picker.js');
-const holidaysVersion=digest('holidays.js'),timerVersion=digest('timer.js');
+const timerVersion=digest('timer.js');
 let app=readFileSync('dist/app.js','utf8').replace(/from '\.\/engine\.js(?:\?[^']*)?'/,"from './engine.js?v="+engineVersion+"'").replace(/from '\.\/backup\.js(?:\?[^']*)?'/,"from './backup.js?v="+backupVersion+"'");writeFileSync('dist/app.js',app);
 app=app.replace(/from '\.\/settings\.js(?:\?[^']*)?'/,"from './settings.js?v="+settingsVersion+"'").replace(/from '\.\/palette\.js(?:\?[^']*)?'/,"from './palette.js?v="+paletteVersion+"'").replace(/from '\.\/color-picker\.js(?:\?[^']*)?'/,"from './color-picker.js?v="+colorPickerVersion+"'");writeFileSync('dist/app.js',app);
 app=app.replace(/from '\.\/timer\.js(?:\?[^']*)?'/,"from './timer.js?v="+timerVersion+"'");
