@@ -2,7 +2,7 @@ const storageKey = 'reading-calendar-timer-v1';
 let timer = {status:'idle', minutes:25, remaining:1500000, endsAt:null};
 try {
   const saved = JSON.parse(localStorage.getItem(storageKey));
-  if (saved && ['idle','running','paused','complete'].includes(saved.status) && Number.isInteger(saved.minutes) && saved.minutes >= 1 && saved.minutes <= 60 && Number.isFinite(saved.remaining) && saved.remaining >= 0 && saved.remaining <= 3600000 && (saved.status !== 'running' || Number.isFinite(saved.endsAt))) timer = saved;
+  if (saved && ['idle','running','paused','complete'].includes(saved.status) && Number.isInteger(saved.minutes) && saved.minutes >= 1 && saved.minutes <= 1440 && Number.isFinite(saved.remaining) && saved.remaining >= 0 && saved.remaining <= saved.minutes * 60000 && (saved.status !== 'running' || Number.isFinite(saved.endsAt))) timer = saved;
 } catch {}
 export function remainingTime(state, now = Date.now()) {
   return Math.max(0, Math.min(state.minutes * 60000, state.status === 'running' ? state.endsAt - now : state.remaining));
@@ -19,12 +19,12 @@ export function timerHTML() {
     <div class="timer-clock">
       <div class="timer-sector" aria-hidden="true"></div>
       <div class="timer-ticks" aria-hidden="true">${Array.from({length:60},(_,i)=>`<i class="${i%5===0?'major':''}" style="--tick:${i*6}deg"></i>`).join('')}</div>
-      <div class="timer-numbers" aria-hidden="true">${Array.from({length:12},(_,i)=>{const a=i*Math.PI/6;return `<span style="left:${50+39*Math.sin(a)}%;top:${50-39*Math.cos(a)}%">${i*5}</span>`}).join('')}</div>
+      <div class="timer-numbers" aria-hidden="true">${Array.from({length:4},(_,i)=>{const a=i*Math.PI/2;return `<span style="left:${50+39*Math.sin(a)}%;top:${50-39*Math.cos(a)}%">${i*timer.minutes/4}</span>`}).join('')}</div>
       <button class="timer-center" type="button" aria-label="타이머 시작"></button>
     </div>
     <p class="timer-status" role="status" aria-live="polite"></p>
-    <div class="timer-setup"><label class="timer-duration">독서 시간 <span><input name="timerMinutes" aria-label="독서 시간 (분)" type="number" min="1" max="60" step="1" inputmode="numeric" value="${timer.minutes}">분</span></label>
-      <input class="timer-slider" aria-label="독서 시간 슬라이더 (분)" type="range" min="1" max="60" step="1" value="${timer.minutes}">
+    <div class="timer-setup"><label class="timer-duration">독서 시간 <span><input name="timerMinutes" aria-label="독서 시간 (분)" type="number" min="1" max="1440" step="1" inputmode="numeric" value="${timer.minutes}">분</span></label>
+      <input class="timer-slider" aria-label="독서 시간 슬라이더 (분)" type="range" min="1" max="${Math.max(60,timer.minutes)}" step="1" value="${timer.minutes}">
       <div class="timer-presets">${[15,25,45,60].map(n=>`<button type="button" data-minutes="${n}">${n}분</button>`).join('')}</div>
       <p class="small timer-hint">중앙 버튼을 누르면 숫자가 숨겨지고 독서가 시작돼요.</p>
     </div>
@@ -62,7 +62,8 @@ export function mountTimer(root) {
     const started=timer.status!=='idle', running=timer.status==='running';
     panel.classList.toggle('timer-started',started);
     panel.classList.toggle('timer-running',running);
-    panel.querySelector('.timer-sector').style.setProperty('--angle',(remainingTime(timer)/3600000*360)+'deg');
+    panel.querySelector('.timer-sector').style.setProperty('--angle',(remainingTime(timer)/(timer.minutes*60000)*360)+'deg');
+    panel.querySelectorAll('.timer-numbers span').forEach((el,i)=>{el.textContent=i===0?String(timer.minutes):String(i*timer.minutes/4)});
     panel.querySelector('.timer-setup').hidden=started;
     panel.querySelector('.timer-reset').hidden=!started;
     const label=running?'타이머 일시정지':timer.status==='paused'?'타이머 재개':timer.status==='complete'?'시간 다시 설정':'타이머 시작';
@@ -75,8 +76,8 @@ export function mountTimer(root) {
     updateLock();
   }
   function setMinutes(value) {
-    if(timer.status!=='idle'||!Number.isInteger(value)||value<1||value>60)return;
-    timer.minutes=value;timer.remaining=value*60000;number.value=value;slider.value=value;save();draw();
+    if(timer.status!=='idle'||!Number.isInteger(value)||value<1||value>1440)return;
+    timer.minutes=value;timer.remaining=value*60000;number.value=value;slider.max=Math.max(60,value);slider.value=value;save();draw();
   }
   number.oninput=()=>{const valid=number.value!==''&&number.validity.valid;center.disabled=!valid;if(valid)setMinutes(Number(number.value));};
   number.onblur=()=>{number.value=timer.minutes;center.disabled=false;};
