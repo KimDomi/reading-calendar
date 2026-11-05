@@ -1,6 +1,6 @@
 {
   "appId": "com.kimdomi.readingcalendar",
-  "appName": "reading-calendar",
+  "appName": "독서 달력",
   "webDir": "dist",
   "android": {
     "allowMixedContent": false

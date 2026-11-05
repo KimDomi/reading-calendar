@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">reading-calendar</string>
-    <string name="title_activity_main">reading-calendar</string>
+    <string name="app_name">독서 달력</string>
+    <string name="title_activity_main">독서 달력</string>
     <string name="package_name">com.kimdomi.readingcalendar</string>
     <string name="custom_url_scheme">com.kimdomi.readingcalendar</string>
 </resources>
