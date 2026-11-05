@@ -129,3 +129,19 @@ html .appearance-card .theme-options{display:grid;grid-template-columns:1fr 1fr 
 html .appearance-card .theme-option{font-size:12px;min-width:0;gap:5px}
 html .appearance-card .theme-option>span{white-space:nowrap}
 html .appearance-card .theme-symbol{font-size:18px;flex-shrink:0}
+
+/* Compact time picker: keep touch targets large while reducing the clock and gaps. */
+html dialog.time-picker.analog-time-picker{width:min(320px,calc(100% - 24px));padding:16px;max-height:calc(100dvh - 24px);overflow-y:auto}
+html .analog-time-picker h2{margin-bottom:12px;font-size:16px}
+.analog-time-picker .tp-digital{grid-template-columns:minmax(0,1fr) 10px minmax(0,1fr) 100px;align-items:center;gap:6px;margin:0 0 8px}
+.analog-time-picker .tp-digit{font-size:32px;min-height:64px;padding:8px 0;border-radius:10px}
+.analog-time-picker .tp-colon{font-size:26px}
+.analog-time-picker .tp-period button{min-height:44px}
+.analog-time-picker .tp-period{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:auto}
+.analog-time-picker .tp-step{margin:0 0 8px}
+.analog-time-picker .tp-dial{width:min(240px,100%);margin:0 auto}
+.analog-time-picker .tp-face-number{width:44px;height:44px;font-size:14px}
+.analog-time-picker .tp-footer{margin-top:12px}
+.analog-time-picker .tp-manual{padding:12px 0;gap:8px}
+html .analog-time-picker .tp-manual input{font-size:24px;min-height:48px}
+@media(max-width:600px){html dialog.time-picker.analog-time-picker{position:fixed;inset:auto 0 0;margin:0 auto max(12px,env(safe-area-inset-bottom));max-height:calc(100dvh - 24px - env(safe-area-inset-bottom))}}
