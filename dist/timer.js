@@ -22,21 +22,19 @@ function finishIfNeeded() {
 export function timerHTML() {
   finishIfNeeded();
   return `<section class="reading-timer" aria-label="독서 타이머">
-    <p class="timer-caption">시간을 내려놓고, 책 속으로.</p>
     <div class="timer-clock">
       <svg class="timer-sector" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="50" class="timer-sector-base"/><path class="timer-wedge"/></svg>
       <div class="timer-ticks" aria-hidden="true">${Array.from({length:60},(_,i)=>`<i class="${i%5===0?'major':''}" style="--tick:${i*6}deg"></i>`).join('')}</div>
       <div class="timer-numbers" aria-hidden="true">${Array.from({length:4},(_,i)=>{const a=i*Math.PI/2;return `<span style="left:${50+39*Math.sin(a)}%;top:${50-39*Math.cos(a)}%">${i*timer.minutes/4}</span>`}).join('')}</div>
       <button class="timer-center" type="button" aria-label="타이머 시작"></button>
     </div>
-    <p class="timer-status" role="status" aria-live="polite"></p>
+    <p class="timer-status sr-only" role="status" aria-live="polite"></p>
     <div class="timer-setup"><label class="timer-duration">독서 시간 <span><input name="timerMinutes" aria-label="독서 시간 (분)" type="number" min="1" max="1440" step="1" inputmode="numeric" value="${timer.minutes}">분</span></label>
       <input class="timer-slider" aria-label="독서 시간 슬라이더 (분)" type="range" min="1" max="${Math.max(60,timer.minutes)}" step="1" value="${timer.minutes}">
       <div class="timer-presets">${[15,25,45,60].map(n=>`<button type="button" data-minutes="${n}">${n}분</button>`).join('')}</div>
-      <p class="small timer-hint">중앙 버튼을 누르면 숫자가 숨겨지고 독서가 시작돼요.</p>
     </div>
     <button type="button" class="secondary timer-reset">시간 다시 설정</button>
-    <p class="small timer-lock" aria-live="polite"></p>
+    <p class="timer-lock sr-only" aria-live="polite"></p>
     <p class="error timer-storage" role="status"></p>
   </section>`;
 }
@@ -91,6 +89,7 @@ export function mountTimer(root) {
     center.innerHTML=running?pause:play;
     const status=running?'지금은 독서에만 집중하세요.':timer.status==='paused'?'잠시 쉬어가고 있어요.':timer.status==='complete'?'독서 시간이 끝났어요.':'나만의 독서 시간을 정해 보세요.';
     const statusEl=panel.querySelector('.timer-status');if(statusEl.textContent!==status)statusEl.textContent=status;
+    statusEl.classList.toggle('sr-only',timer.status!=='complete');
     panel.querySelectorAll('[data-minutes]').forEach(el=>el.setAttribute('aria-pressed',String(Number(el.dataset.minutes)===timer.minutes)));
     panel.querySelector('.timer-storage').textContent=saveFailed?'타이머 상태를 저장하지 못했어요. 새로고침하면 시간이 복원되지 않을 수 있어요.':'';
     updateLock();
