@@ -1,4 +1,4 @@
-# 독서 달력
+# reading-calendar
 
 Dependency-free static app. Browser-local data stays in `reading-calendar-v1`;
 import recovery uses `reading-calendar-pre-import`. No runtime API or cloud data

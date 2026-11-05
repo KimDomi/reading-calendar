@@ -22,8 +22,8 @@ export function validateData(data){
  return {books,records,alloc,...(data.restDays?{restDays:normalizeRestDays(data.restDays)}:{})};
 }
 export function makeBackup(state,at=new Date().toISOString(),settings){return {app:'reading-calendar',version:1,exportedAt:at,data:validateData(state),...(settings===undefined?{}:{settings:validateSettings(settings)})}}
-export function parseBackup(text){let b;try{b=JSON.parse(text)}catch{throw Error('파일을 읽을 수 없어요. 독서 달력에서 내보낸 JSON 파일을 선택해 주세요.')}
- if(b?.app!=='reading-calendar'||b.version!==1)throw Error('지원하는 독서 달력 백업 파일이 아니에요.');if(typeof b.exportedAt!=='string'||Number.isNaN(Date.parse(b.exportedAt)))fail();return {...b,data:validateData(b.data),...(b.settings===undefined?{}:{settings:validateSettings(b.settings)})};
+export function parseBackup(text){let b;try{b=JSON.parse(text)}catch{throw Error('파일을 읽을 수 없어요. reading-calendar에서 내보낸 JSON 파일을 선택해 주세요.')}
+ if(b?.app!=='reading-calendar'||b.version!==1)throw Error('지원하는 reading-calendar 백업 파일이 아니에요.');if(typeof b.exportedAt!=='string'||Number.isNaN(Date.parse(b.exportedAt)))fail();return {...b,data:validateData(b.data),...(b.settings===undefined?{}:{settings:validateSettings(b.settings)})};
 }
 export function writeImport(storage,data,settings,recovery){
  const dataKey='reading-calendar-v1',settingsKey='reading-calendar-settings-v1';
