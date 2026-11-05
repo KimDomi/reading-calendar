@@ -37,7 +37,7 @@ export function timerHTML() {
       <svg class="timer-sector" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="50" class="timer-sector-base"/><path class="timer-wedge"/></svg>
       <button class="timer-color-trigger" type="button" aria-label="타이머 색상 변경" aria-haspopup="dialog"></button>
       <div class="timer-ticks" aria-hidden="true">${Array.from({length:60},(_,i)=>`<i class="${i%5===0?'major':''}" style="--tick:${i*6}deg"></i>`).join('')}</div>
-      <div class="timer-numbers" aria-hidden="true">${Array.from({length:4},(_,i)=>{const a=i*Math.PI/2;return `<span style="left:${50+39*Math.sin(a)}%;top:${50-39*Math.cos(a)}%">${i*timer.minutes/4}</span>`}).join('')}</div>
+      <div class="timer-numbers" aria-hidden="true">${Array.from({length:4},(_,i)=>{const a=i*Math.PI/2;return `<span style="left:${50+45*Math.sin(a)}%;top:${50-45*Math.cos(a)}%">${i*timer.minutes/4}</span>`}).join('')}</div>
       <button class="timer-center" type="button" aria-label="타이머 시작"></button>
     </div>
     <p class="timer-status sr-only" role="status" aria-live="polite"></p>
