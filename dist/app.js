@@ -1,5 +1,5 @@
 import {unconfirmedBookIds} from './progress-check.js?v=ef8f5b599017';
-import {mountTimePickers,closeTimePicker} from './time-picker.js?v=8a57d43080c7';
+import {mountTimePickers,closeTimePicker} from './time-picker.js?v=4917c894626a';
 import {mountDatePickers,closeDatePicker} from './date-picker.js?v=9042f5d52759';
 import {normalizeRestDays,isRestDay,readingDays,readingFinish} from './rest-days.js?v=270c12ac63f1';
 import {timerHTML,mountTimer,timerIsRunning} from './timer.js?v=8af0d958d92a';

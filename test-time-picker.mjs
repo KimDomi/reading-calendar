@@ -1,0 +1,15 @@
+import assert from 'node:assert/strict';
+import {dialValue,timeLabel} from './dist/time-picker.js';
+assert.equal(dialValue(0,-100),0);
+assert.equal(dialValue(100,0),3);
+assert.equal(dialValue(0,100),6);
+assert.equal(dialValue(-100,0),9);
+assert.equal(dialValue(100,0,true),15);
+assert.equal(dialValue(0,100,true),30);
+assert.equal(dialValue(-100,0,true),45);
+const angle=42*Math.PI/180;
+assert.equal(dialValue(Math.sin(angle),-Math.cos(angle),true),7);
+assert.equal(timeLabel('00:00'),'오전 12:00');
+assert.equal(timeLabel('12:00'),'오후 12:00');
+assert.equal(timeLabel('23:59'),'오후 11:59');
+console.log('PASS clock dial directions, single-minute selection and 12-hour labels');
