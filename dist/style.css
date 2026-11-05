@@ -4,7 +4,7 @@
 
 [hidden]{display:none!important}
 
-:root .day.selected{background:var(--soft);border-color:var(--green);box-shadow:inset 0 0 0 2px var(--green);color:var(--text)}:root .day.selected.day-holiday{color:var(--holiday)}:root .day.selected.day-saturday{color:var(--saturday)}
+html[data-theme] .grid .day.selected{background:var(--soft);border-color:var(--green);box-shadow:inset 0 0 0 2px var(--green);color:var(--text)}html[data-theme] .grid .day.selected.day-holiday{color:var(--holiday)}html[data-theme] .grid .day.selected.day-saturday{color:var(--saturday)}
 
 :root{--holiday:#b53d38;--saturday:#3265ba}:root[data-theme=dark]{--holiday:#ff9993;--saturday:#91b9ff}.week span:first-child,.day.day-holiday{color:var(--holiday)}.week span:last-child,.day.day-saturday{color:var(--saturday)}.day.selected.day-holiday{color:#ffe0dd}.day.selected.day-saturday{color:#dceaff}:root[data-theme=dark] .day.selected.day-holiday{color:#78211c}:root[data-theme=dark] .day.selected.day-saturday{color:#164381}
 
