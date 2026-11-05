@@ -90,3 +90,40 @@ header .help{left:12px;right:auto}.header-new{display:none;position:absolute;rig
 :root[data-theme=dark]{color-scheme:dark;--surface:#1c1c1e;--card:#262628;--soft:#303033;--text:#ededee;--accent:#d0d0d8;--muted:#aaaab0;--line:#414145;background:#141416;color:var(--text)}
 .app,dialog{background:var(--surface)}nav{background:var(--surface)}.book,input,select{background:var(--card);color:var(--text)}.day,.pill,.progress,.icon:hover{background:var(--soft)}.day.selected,.primary{background:var(--accent);color:#fff}:root[data-theme=dark] .primary,:root[data-theme=dark] .day.selected{color:#202024}:root[data-theme=dark] .note,:root[data-theme=dark] .plan-group.drop-target{background:#303033}:root[data-theme=dark] label.field{color:var(--muted)}
 .settings-intro{margin:4px 0 24px}.settings-card{padding:20px 16px;background:var(--card);border:1px solid var(--line);border-radius:14px;margin:16px 0}.settings-card h2{font-size:16px}.settings-card p{margin:8px 0}.settings-card .note{margin-bottom:0}.theme-options{display:flex;gap:8px;border:0;padding:0;margin:20px 0 12px}.theme-option{position:relative;flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;padding:14px 4px;border:1px solid var(--line);border-radius:12px;font-size:12px;cursor:pointer}.theme-option input{position:absolute;opacity:0;width:1px;height:1px;margin:0;padding:0}.theme-option:has(input:checked){border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent);background:var(--soft)}.theme-option:has(input:focus-visible){outline:3px solid var(--accent);outline-offset:3px}.theme-symbol{font-size:26px}.setting-switch{width:52px;min-width:52px;height:32px;border-radius:20px;background:var(--muted);padding:4px;display:flex;align-items:center}.switch-thumb{height:24px;width:24px;border-radius:50%;background:#fff;transition:transform .15s}.setting-switch[aria-checked=true]{background:var(--accent)}.setting-switch[aria-checked=true] .switch-thumb{transform:translateX(20px)}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}@media(prefers-reduced-motion:reduce){.switch-thumb{transition:none}}
+/* Shared control and dialog rules. Functional calendar and book colors stay separate. */
+:root{--control-font:14px;--label-font:12px;--field-gap:8px;--form-gap:20px;--dialog-padding:20px;--selection-bg:#e1e1e7;--control-radius:10px}
+:root[data-theme=dark]{--selection-bg:#414147}
+html .primary,html .secondary{font-size:var(--control-font);min-height:44px;border-radius:var(--control-radius);line-height:1.5}
+html .primary{font-weight:650}
+html .secondary{background:var(--card);color:var(--text)}
+html .header-new{font-size:12px;min-height:40px;background:#e1e1e7;color:#202024}
+html .header-new:hover{background:#d7d7df}
+html .header-new:active{background:#cdcdd7}
+html dialog,html dialog.date-picker,html dialog.time-picker{padding:var(--dialog-padding)}
+html dialog h2{font-size:18px;line-height:1.5;margin-bottom:var(--form-gap)}
+html label.field,html .choice-field legend,html .book-colors legend,html .rest-weekdays legend{font-size:var(--label-font);line-height:1.5;color:var(--muted)}
+html input:not([type=radio]):not([type=checkbox]):not([type=range]):not([type=color]),html select,html .date-trigger,html .time-trigger{font-size:var(--control-font);border-radius:var(--control-radius);border-color:var(--line)}
+html label.field>input,html label.field>.date-trigger,html label.field>.time-trigger{margin-top:var(--field-gap);min-height:46px}
+html :is(#bookform,#recordform,#checkform,#importform){display:grid;gap:var(--form-gap)}
+html :is(#bookform,#recordform,#checkform,#importform)>:is(.field,.choice-field,.book-colors,p,.cancel,.backup-check){margin:0}
+html :is(#bookform,#recordform,#checkform,#importform)>p:empty{display:none}
+html :is(#bookform,#recordform,#checkform,#importform)>.add{margin-top:0}
+html #bookform .two{gap:var(--form-gap)}
+html #bookform .two .field{margin:0}
+html .settings-content{display:grid;gap:var(--form-gap)}
+html .settings-content>:is(.field,.note,.theme-options,.rest-weekdays,.rest-holidays,#rest-date-form,.rest-date-list){margin:0}
+html #rest-date-form{display:grid;gap:var(--form-gap)}
+html #rest-date-form>.field{margin:0}
+html .choice-field legend,html .book-colors legend,html .rest-weekdays legend{margin-bottom:var(--field-gap)}
+html :is(.choice-options span,.theme-option,.rest-mode span,.timer-presets button){font-size:13px;border-radius:var(--control-radius);min-height:44px}
+html :is(.choice-options input:checked+span,.theme-option:has(input:checked),.rest-mode input:checked+span,.rest-weekdays button[aria-pressed=true],.timer-presets button[aria-pressed=true]){
+  background:var(--selection-bg);color:var(--text);border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent);font-weight:650
+}
+html .analog-time-picker{--time-selected:var(--selection-bg)}
+html .tp-digit[aria-pressed=true],html .tp-period button[aria-pressed=true]{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+html .tp-period button{border:1px solid transparent}
+nav [data-tab=timer] svg{width:21px;height:21px}
+html .appearance-card .theme-options{display:grid;grid-template-columns:1fr 1fr 1.3fr;gap:8px}
+html .appearance-card .theme-option{font-size:12px;min-width:0;gap:5px}
+html .appearance-card .theme-option>span{white-space:nowrap}
+html .appearance-card .theme-symbol{font-size:18px;flex-shrink:0}
