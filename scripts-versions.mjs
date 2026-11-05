@@ -3,6 +3,11 @@ import './scripts-holidays.mjs';
 import {readFileSync,writeFileSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 const digest=name=>createHash('sha256').update(readFileSync('dist/'+name)).digest('hex').slice(0,12);
+const nativeVersion=digest('native.js');
+for(const name of ['app.js','settings.js','timer.js']){
+  const source=readFileSync('dist/'+name,'utf8').replace(/from '\.\/native\.js(?:\?[^']*)?'/,"from './native.js?v="+nativeVersion+"'");
+  writeFileSync('dist/'+name,source);
+}
 const holidaysVersion=digest('holidays.js');
 let rest=readFileSync('dist/rest-days.js','utf8').replace(/from '\.\/holidays\.js(?:\?[^']*)?'/,"from './holidays.js?v="+holidaysVersion+"'");writeFileSync('dist/rest-days.js',rest);
 const restVersion=digest('rest-days.js');

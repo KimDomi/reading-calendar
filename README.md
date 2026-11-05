@@ -1,5 +1,8 @@
 # reading-calendar
 
+Android first build: [setup, installation and device checks](ANDROID.md).
+Run `npm run android:debug` with JDK 21 and Android SDK 36 to build a test APK.
+
 Dependency-free static app. Browser-local data stays in `reading-calendar-v1`;
 import recovery uses `reading-calendar-pre-import`. No runtime API or cloud data
 store is required.

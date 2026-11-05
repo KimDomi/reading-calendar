@@ -1,0 +1,8 @@
+{
+  "appId": "com.kimdomi.readingcalendar",
+  "appName": "reading-calendar",
+  "webDir": "dist",
+  "android": {
+    "allowMixedContent": false
+  }
+}

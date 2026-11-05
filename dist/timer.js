@@ -1,3 +1,4 @@
+import {screenLockAvailable,requestScreenLock} from './native.js?v=120096a60ed4';
 const storageKey = 'reading-calendar-timer-v1';
 let timer = {status:'idle', minutes:25, remaining:1500000, endsAt:null};
 try {
@@ -69,12 +70,12 @@ export function mountTimer(root,getEstimatedMinutes=()=>0) {
     if (attempted) return;
     attempted=true;
     const epoch=++lockEpoch;
-    if (!navigator.wakeLock) {lockStatus.textContent='이 브라우저에서는 화면 켜짐 유지가 지원되지 않아요.';return;}
+    if (!screenLockAvailable()) {lockStatus.textContent='이 브라우저에서는 화면 켜짐 유지가 지원되지 않아요.';return;}
     try {
-      const granted=await navigator.wakeLock.request('screen');
+      const granted=await requestScreenLock();
       if(disposed||timer.status!=='running'||document.hidden||epoch!==lockEpoch){await granted.release();return;}
       lock=granted;lockStatus.textContent='화면 켜짐 유지 중';
-      granted.addEventListener('release',()=>{if(lock===granted){lock=null;lockStatus.textContent='화면 켜짐 유지가 해제됐어요.';}});
+      granted.addEventListener?.('release',()=>{if(lock===granted){lock=null;lockStatus.textContent='화면 켜짐 유지가 해제됐어요.';}});
     } catch {if(!disposed)lockStatus.textContent='화면 켜짐을 유지할 수 없어요. 절전 설정을 확인해 주세요.';}
   }
   function draw() {

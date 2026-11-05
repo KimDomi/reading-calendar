@@ -1,4 +1,5 @@
 import {normalizeRestDays} from './rest-days.js?v=270c12ac63f1';
+import {syncSystemBars,isNativeApp} from './native.js?v=120096a60ed4';
 const key = 'reading-calendar-settings-v1';
 export const settings = {theme: 'system', notifications: false, notificationTime: '21:00'};
 const validTime = value => typeof value === 'string' && /^([01]\d|2[0-3]):[0-5]\d$/.test(value);
@@ -12,6 +13,7 @@ const system = typeof matchMedia === 'function' ? matchMedia('(prefers-color-sch
 export function applyTheme() {
   if (!document.documentElement) return;
   document.documentElement.dataset.theme = settings.theme === 'system' ? (system?.matches ? 'dark' : 'light') : settings.theme;
+  syncSystemBars(document.documentElement.dataset.theme);
 }
 system?.addEventListener('change', applyTheme);
 applyTheme();
@@ -31,7 +33,7 @@ export function settingsHTML(restDays = {}) {
   return `<details class="settings-card settings-section appearance-card" data-settings-section="appearance" ${openSections.has('appearance')?'open':''}><summary>화면 모드</summary><div class="settings-content">
   <fieldset class="theme-options"><legend class="sr-only">화면 모드 선택</legend>${[['light','☀','라이트'],['dark','☾','다크'],['system','◐','시스템 설정']].map(([value,icon,label])=>`<label class="theme-option"><input type="radio" name="theme" value="${value}" ${settings.theme===value?'checked':''}><span class="theme-symbol" aria-hidden="true">${icon}</span><span>${label}</span></label>`).join('')}</fieldset>
   </div></details>
-  <details class="settings-card settings-section" data-settings-section="notifications" ${openSections.has('notifications')?'open':''}><summary>독서 알림</summary><div class="settings-content"><div class="row"><div><span id="notification-label" class="setting-label">알림 켜기</span><p class="small" id="notification-description">알림 기능을 준비하고 있어요.</p></div><button type="button" class="setting-switch" role="switch" aria-checked="${settings.notifications}" aria-labelledby="notification-label" aria-describedby="notification-description" data-setting="notifications"><span class="switch-thumb"></span><span class="sr-only">${settings.notifications?'켜짐':'꺼짐'}</span></button></div><label class="field">알림 시간<input type="time" name="notificationTime" value="${settings.notificationTime}" ${settings.notifications?'':'disabled'}></label><div class="note">켜기·끄기와 시간만 미리 저장해요. 정한 시간까지 독서 기록이 없으면 알려주는 기능은 앱 버전에서 제공할 예정이에요. 현재 알림은 발송되지 않아요.</div></div></details>
+  <details class="settings-card settings-section" data-settings-section="notifications" ${openSections.has('notifications')?'open':''}><summary>독서 알림</summary><div class="settings-content"><div class="row"><div><span id="notification-label" class="setting-label">알림 켜기</span><p class="small" id="notification-description">알림 기능을 준비하고 있어요.</p></div><button type="button" class="setting-switch" role="switch" aria-checked="${settings.notifications}" aria-labelledby="notification-label" aria-describedby="notification-description" data-setting="notifications"><span class="switch-thumb"></span><span class="sr-only">${settings.notifications?'켜짐':'꺼짐'}</span></button></div><label class="field">알림 시간<input type="time" name="notificationTime" value="${settings.notificationTime}" ${settings.notifications?'':'disabled'}></label><div class="note">켜기·끄기와 시간만 미리 저장해요. 정한 시간까지 독서 기록이 없으면 알려주는 기능은 ${isNativeApp()?'후속 버전':'앱 버전'}에서 제공할 예정이에요. 현재 알림은 발송되지 않아요.</div></div></details>
   <details class="settings-card settings-section rest-card" data-settings-section="rest" ${openSections.has('rest')?'open':''}><summary>독서 쉬는 날</summary><div class="settings-content">
     <fieldset class="rest-weekdays"><legend>매주 쉬는 요일</legend><div>${[1,2,3,4,5,6,0].map(d=>`<button type="button" data-rest-weekday="${d}" aria-label="${weekdayNames[d]}요일 휴식" aria-pressed="${rest.weekdays.includes(d)}">${weekdayNames[d]}</button>`).join('')}</div></fieldset>
     <label class="rest-holidays"><input type="checkbox" name="restPublicHolidays" ${rest.publicHolidays?'checked':''}>공휴일에도 쉬기</label>
