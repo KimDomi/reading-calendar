@@ -1,6 +1,6 @@
 import {screenLockAvailable,requestScreenLock} from './native.js?v=bcb0856dfeee';
 import {settings,updateSetting,DEFAULT_TIMER_COLOR} from './settings.js?v=d18ca87e4103';
-import {openTimerColorPicker,closeTimerColorPicker} from './timer-color-picker.js?v=4b20481d2d65';
+import {openTimerColorPicker,closeTimerColorPicker} from './timer-color-picker.js?v=3a8583b1d92e';
 export {closeTimerColorPicker};
 const storageKey = 'reading-calendar-timer-v1';
 let timer = {status:'idle', minutes:25, remaining:1500000, endsAt:null};

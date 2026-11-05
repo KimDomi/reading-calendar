@@ -32,8 +32,8 @@ export function mountHSVPicker(panel,{onApply,onClose,onPreview=()=>{}}){
     panel.querySelector('.hsv-preview').style.background=hex();
     panel.querySelector('.hsv-hex').textContent=hex().toUpperCase();
     const [h,s,v]=values();
-    panel.querySelector('[data-range="s"]').style.background=`linear-gradient(to right, ${hsvToHex(h,0,v)}, ${hsvToHex(h,100,v)})`;
-    panel.querySelector('[data-range="v"]').style.background=`linear-gradient(to right, #000000, ${hsvToHex(h,s,100)})`;
+    panel.querySelector('[data-range="s"]').style.setProperty('--hsv-track',`linear-gradient(to right, ${hsvToHex(h,0,v)}, ${hsvToHex(h,100,v)})`);
+    panel.querySelector('[data-range="v"]').style.setProperty('--hsv-track',`linear-gradient(to right, #000000, ${hsvToHex(h,s,100)})`);
     onPreview(hex());
   };
   const setColor=color=>{

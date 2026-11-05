@@ -1,4 +1,4 @@
-import {hsvPickerHTML,mountHSVPicker} from './color-picker.js?v=6cacb29b93e5';
+import {hsvPickerHTML,mountHSVPicker} from './color-picker.js?v=35e7dfee9cdf';
 
 let dismiss=null;
 export function closeTimerColorPicker(){dismiss?.();}
