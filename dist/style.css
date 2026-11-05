@@ -4,6 +4,8 @@
 
 [hidden]{display:none!important}
 
+.reading-timer{--timer-nav-height:84px;--timer-center-y:calc(50dvh + 28px - var(--timer-nav-height)/2);--timer-diameter:min(340px,calc(100vw - 44px),calc(100dvh - 56px - var(--timer-nav-height) - 200px))}.timer-started .timer-clock{position:fixed;left:50%;top:var(--timer-center-y);transform:translate(-50%,-50%);width:var(--timer-diameter);margin:0}.reading-timer.timer-started .timer-reset{position:fixed;left:50%;top:calc(var(--timer-center-y) + var(--timer-diameter)/2 + 24px);transform:translateX(-50%);margin:0}.reading-timer.timer-started .timer-status:not(.sr-only){position:fixed;left:50%;top:calc(var(--timer-center-y) + var(--timer-diameter)/2 + 16px);transform:translateX(-50%);width:calc(100% - 44px);margin:0}.reading-timer.timer-started .timer-status:not(.sr-only)~.timer-reset{top:calc(var(--timer-center-y) + var(--timer-diameter)/2 + 60px)}
+
 .settings-card.appearance-card{padding-block:20px}.settings-card h2{line-height:1.5}.data-card .settings-title{position:relative;min-height:24px;padding-right:44px}.data-card .info-help{position:absolute;right:0;top:50%;transform:translateY(-50%)}.data-card>.add{margin-top:12px}
 
 nav button>span{display:flex;align-items:center;justify-content:center;height:30px}nav svg{width:19px;height:19px;flex-shrink:0}nav [data-tab=timer]>span{font-size:31.5px;line-height:30px}

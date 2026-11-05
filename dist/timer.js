@@ -42,6 +42,8 @@ const play = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5v14l11-7z
 const pause = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h4v14H7zm6 0h4v14h-4z" fill="currentColor"/></svg>';
 export function mountTimer(root) {
   const panel = root.querySelector('.reading-timer'), center=panel.querySelector('.timer-center'), number=panel.querySelector('[name=timerMinutes]'), slider=panel.querySelector('.timer-slider');
+  const alignClock = () => panel.style.setProperty('--timer-nav-height', (document.querySelector('nav')?.getBoundingClientRect().height || 84)+'px');
+  alignClock();window.addEventListener('resize',alignClock);
   let disposed=false, lock=null, attempted=false, lockEpoch=0, animation=null;
   function paintSector() {
     const fraction=remainingTime(timer)/(timer.minutes*60000);
@@ -112,5 +114,5 @@ export function mountTimer(root) {
     save();draw();
   };
   draw();const interval=setInterval(draw,1000);
-  return ()=>{disposed=true;clearInterval(interval);if(animation!==null)cancelAnimationFrame(animation);updateLock();};
+  return ()=>{disposed=true;clearInterval(interval);window.removeEventListener('resize',alignClock);if(animation!==null)cancelAnimationFrame(animation);updateLock();};
 }
