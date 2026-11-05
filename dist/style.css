@@ -6,7 +6,7 @@
 
 .reading-timer .timer-wedge{fill:var(--timer-color,#7d9b8a)}.timer-color-trigger{position:absolute;left:15%;top:15%;width:70%;height:70%;border-radius:50%;padding:0;z-index:1;cursor:pointer}.reading-timer .timer-center{z-index:2}.timer-ticks{pointer-events:none}.timer-color-trigger:focus-visible{outline:2px solid var(--accent);outline-offset:5px}
 html dialog.timer-color-picker{width:min(340px,calc(100% - 24px));padding:16px;max-height:calc(100dvh - 24px);overflow-y:auto}.timer-color-picker h2{margin-bottom:12px}.timer-color-presets{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}.timer-color-presets button{background:var(--swatch);aspect-ratio:1;min-width:44px;min-height:44px;border-radius:50%;border:3px solid var(--surface);box-shadow:0 0 0 1px var(--line)}.timer-color-presets button[aria-pressed=true]{box-shadow:0 0 0 2px var(--text)}.timer-color-picker .hsv-picker{margin-top:14px;padding:0;border:0;background:transparent}.timer-color-picker .hsv-preview{height:32px}.timer-color-picker .hsv-channel input[type=range]{min-height:44px}.timer-color-picker .hsv-actions button{min-height:44px}.timer-color-error{margin:12px 0 0}
-@media(max-width:600px){html dialog.timer-color-picker{position:fixed;inset:auto 0 0;margin:0 auto max(12px,env(safe-area-inset-bottom));max-height:calc(100dvh - 24px - env(safe-area-inset-bottom))}}
+@media(max-width:600px){html dialog.timer-color-picker{position:fixed;inset:0;margin:auto;max-height:calc(100dvh - 24px - env(safe-area-inset-bottom))}}
 
 #calendar-details{--calendar-card-height:90px}#calendar-details .bookrow{min-height:calc(var(--calendar-card-height) - 2px)}#calendar-details .calendar-empty{min-height:var(--calendar-card-height);margin:10px 0;padding:12px;border-radius:13px;display:grid;place-items:center}
 
@@ -150,4 +150,4 @@ html .analog-time-picker h2{margin-bottom:12px;font-size:16px}
 .analog-time-picker .tp-footer{margin-top:12px}
 .analog-time-picker .tp-manual{padding:12px 0;gap:8px}
 html .analog-time-picker .tp-manual input{font-size:24px;min-height:48px}
-@media(max-width:600px){html dialog.time-picker.analog-time-picker{position:fixed;inset:auto 0 0;margin:0 auto max(12px,env(safe-area-inset-bottom));max-height:calc(100dvh - 24px - env(safe-area-inset-bottom))}}
+@media(max-width:600px){html dialog.time-picker.analog-time-picker{position:fixed;inset:0;margin:auto;max-height:calc(100dvh - 24px - env(safe-area-inset-bottom))}}
