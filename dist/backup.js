@@ -4,6 +4,10 @@ const date=x=>typeof x==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(x)&&!Number.isNaN(
 const integer=(x,min,max)=>Number.isInteger(x)&&x>=min&&x<=max;
 const fail=()=>{throw Error('독서 백업 파일의 형식이나 데이터가 올바르지 않아요. 원본 파일을 확인해 주세요.')};
 const idOK=x=>typeof x==='string'&&/^[a-zA-Z0-9_-]{1,128}$/.test(x);
+export function validateSettings(value){
+ if(!value||typeof value!=='object'||!['system','light','dark'].includes(value.theme)||typeof value.notifications!=='boolean'||typeof value.notificationTime!=='string'||!/^([01]\d|2[0-3]):[0-5]\d$/.test(value.notificationTime))fail();
+ return {theme:value.theme,notifications:value.notifications,notificationTime:value.notificationTime};
+}
 export function validateData(data){
  if(!data||!Array.isArray(data.books)||!Array.isArray(data.records)||!Array.isArray(data.alloc)||data.books.length>10000||data.records.length>200000||data.alloc.length>200000)fail();
  const ids=new Map(),books=data.books.map(b=>{
@@ -17,9 +21,17 @@ export function validateData(data){
  const alloc=data.alloc.map(a=>{let b=ids.get(a?.id);if(!b||!date(a.date)||!integer(a.from,1,100000)||!integer(a.to,a.from,100000)||a.n!==a.to-a.from+1)fail();return {id:a.id,date:a.date,from:a.from,to:a.to,n:a.n}});
  return {books,records,alloc,...(data.restDays?{restDays:normalizeRestDays(data.restDays)}:{})};
 }
-export function makeBackup(state,at=new Date().toISOString()){return {app:'reading-calendar',version:1,exportedAt:at,data:validateData(state)}}
+export function makeBackup(state,at=new Date().toISOString(),settings){return {app:'reading-calendar',version:1,exportedAt:at,data:validateData(state),...(settings===undefined?{}:{settings:validateSettings(settings)})}}
 export function parseBackup(text){let b;try{b=JSON.parse(text)}catch{throw Error('파일을 읽을 수 없어요. 독서 달력에서 내보낸 JSON 파일을 선택해 주세요.')}
- if(b?.app!=='reading-calendar'||b.version!==1)throw Error('지원하는 독서 달력 백업 파일이 아니에요.');if(typeof b.exportedAt!=='string'||Number.isNaN(Date.parse(b.exportedAt)))fail();return {...b,data:validateData(b.data)};
+ if(b?.app!=='reading-calendar'||b.version!==1)throw Error('지원하는 독서 달력 백업 파일이 아니에요.');if(typeof b.exportedAt!=='string'||Number.isNaN(Date.parse(b.exportedAt)))fail();return {...b,data:validateData(b.data),...(b.settings===undefined?{}:{settings:validateSettings(b.settings)})};
+}
+export function writeImport(storage,data,settings,recovery){
+ const dataKey='reading-calendar-v1',settingsKey='reading-calendar-settings-v1';
+ const oldData=storage.getItem(dataKey),preferences=settings===undefined?undefined:validateSettings(settings);
+ storage.setItem('reading-calendar-pre-import',recovery);
+ let dataWritten=false;
+ try{storage.setItem(dataKey,JSON.stringify(data));dataWritten=true;if(preferences!==undefined)storage.setItem(settingsKey,JSON.stringify(preferences));}
+ catch(err){if(dataWritten){if(oldData===null)storage.removeItem(dataKey);else storage.setItem(dataKey,oldData);}throw err;}
 }
 export function mergeBackup(current,incoming,today){
  const state=structuredClone(current),existing=new Set(state.books.map(b=>b.id)),newBooks=incoming.books.filter(b=>!existing.has(b.id)).map(b=>({...b})),newIds=new Set(newBooks.map(b=>b.id));

@@ -19,6 +19,8 @@ The product direction and release gates are tracked in [`ROADMAP.md`](ROADMAP.md
 
 Settings support weekly rest days, optional Korean public holidays, and dated overrides (`rest` / `read`). Date overrides take priority. These scheduling preferences are stored with reading data and included in JSON backups; merging keeps the current preferences. Changing them recalculates allocations from today and preserves earlier allocations and all records. At least one weekly reading day must remain available. Deadline plans without any available reading days show a warning instead of receiving allocations.
 
+Exports also include theme, notification toggle and notification time. The import preview offers an opt-in checkbox (selected by default) to restore included preferences and rest days, for either merge or replacement. Without settings in a legacy backup, or with that checkbox cleared, current preferences remain. Pre-import recovery includes preferences. Active timer sessions are kept on the current device and are not exported.
+
 ## Source
 
 - `dist/app.js`: UI, interactions and derived display indexes. Rebuild display

@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import {makeBackup,parseBackup,mergeBackup,validateData} from './dist/backup.js';
+import {makeBackup,parseBackup,mergeBackup,validateData,writeImport} from './dist/backup.js';
 const book={id:'a',title:'새의 언어',total:200,page:60,color:'#678b70',status:'active',mode:'sequence',order:0,created:'2026-10-01',confirmed:'2026-10-12',deadline:'2026-10-27'};
 const state={books:[book,{...book,id:'done',page:200,status:'done',finished:'2026-10-12'},{...book,id:'paused',status:'past',reason:'직접 중단',basis:'daily',dailyPages:10}],records:[{id:'a',date:'2026-10-12',page:60,delta:60},{id:'done',date:'2026-10-12',page:200,delta:200}],alloc:[{id:'a',date:'2026-10-12',from:1,to:10,n:10}]};
 const text=JSON.stringify(makeBackup(state,'2026-10-13T03:30:00Z')),roundtrip=parseBackup(text).data;assert.deepEqual(roundtrip,validateData(state));assert.equal(roundtrip.books[2].basis,'daily');assert.equal(roundtrip.books[1].finished,'2026-10-12');
@@ -9,3 +9,18 @@ assert.throws(()=>parseBackup('{'));assert.throws(()=>parseBackup(JSON.stringify
 for(const mutate of [s=>s.books.push({...s.books[0]}),s=>s.books[0].page=999,s=>s.books[0].color='red;position:fixed',s=>s.records[0].id='missing',s=>s.books[0].deadline='2026-02-30',s=>s.alloc[0].n=999,s=>{s.books[0].basis='daily';s.books[0].dailyPages=0}]){let bad=structuredClone(state);mutate(bad);assert.throws(()=>validateData(bad));}
 assert.deepEqual(parseBackup(JSON.stringify(makeBackup({books:[],records:[],alloc:[]}))).data,{books:[],records:[],alloc:[]});
 console.log('PASS: backup roundtrip, status/settings preservation, deduplication, no input mutation, sequence append, history retention, malformed file rejection');
+const preferences={theme:'dark',notifications:true,notificationTime:'20:30'};
+assert.deepEqual(parseBackup(JSON.stringify(makeBackup(state,undefined,preferences))).settings,preferences);
+assert.equal(parseBackup(text).settings,undefined);
+for(const settings of [{...preferences,theme:'blue'},{...preferences,notifications:'yes'},{...preferences,notificationTime:'25:00'}])assert.throws(()=>parseBackup(JSON.stringify({...JSON.parse(text),settings})));
+const entries=new Map([['reading-calendar-v1','original'],['reading-calendar-settings-v1','old-settings']]);
+let failSettings=true;
+const storage={getItem:k=>entries.get(k)??null,removeItem:k=>entries.delete(k),setItem:(k,v)=>{if(k==='reading-calendar-settings-v1'&&failSettings)throw Error('quota');entries.set(k,v)}};
+assert.throws(()=>writeImport(storage,roundtrip,preferences,'recovery'));
+assert.equal(entries.get('reading-calendar-v1'),'original');
+assert.equal(entries.get('reading-calendar-settings-v1'),'old-settings');
+failSettings=false;writeImport(storage,roundtrip,preferences,'recovery');
+assert.deepEqual(JSON.parse(entries.get('reading-calendar-settings-v1')),preferences);
+writeImport(storage,roundtrip,undefined,'recovery');
+assert.deepEqual(JSON.parse(entries.get('reading-calendar-settings-v1')),preferences);
+console.log('PASS preference roundtrip, legacy backups, malformed settings and import storage rollback');

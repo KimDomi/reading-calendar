@@ -23,6 +23,7 @@ export function updateSetting(name, value) {
   applyTheme();
   localStorage.setItem(key, JSON.stringify(settings));
 }
+export function adoptSettings(value) {Object.assign(settings,value);applyTheme();}
 export function settingsHTML(restDays = {}) {
   const rest=normalizeRestDays(restDays),weekdayNames=['일','월','화','수','목','금','토'];
   return `<section class="settings-card appearance-card"><h2>화면 모드</h2>
