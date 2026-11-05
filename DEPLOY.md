@@ -1,8 +1,8 @@
 # reading-calendar 배포
 
-현재 자동 배포는 GitHub `KimDomi/fff`의 `main`과 Cloudflare Worker `fff`에 연결되어 있다.
-기존 주소는 https://fff.waffle4843.workers.dev 이다.
-`wrangler.jsonc`는 이 기존 사이트를 유지하기 위한 설정이다.
+Cloudflare Worker 이름은 `reading-calendar`이며, 기본 `wrangler.jsonc`도 같은 이름으로 맞췄다.
+마지막 확인 화면의 Git 연결은 `KimDomi/fff`의 `main`이다. GitHub 저장소 이름 변경 후 연결도 확인한다.
+이전 주소는 https://fff.waffle4843.workers.dev 이다. 이름 변경 후 이 주소가 계속 동작한다고 가정하지 않는다.
 
 ## 이름 변경 마무리
 
@@ -15,16 +15,16 @@
    git remote set-url origin https://github.com/KimDomi/reading-calendar.git
    ```
 
-2. Cloudflare Workers & Pages에서 새 Worker `reading-calendar`를 만들고 변경한 저장소의 `main`을 연결한다.
+2. Cloudflare의 기존 Worker를 `reading-calendar`로 이름 변경했다. 이 Worker의 빌드 설정과 Git 연결을 확인한다.
    - 빌드 명령: `node scripts-versions.mjs`
-   - 배포 명령: `npx wrangler deploy --config wrangler.reading-calendar.jsonc`
+   - 배포 명령: `npx wrangler deploy`
    - 기존 명령에 남은 `--name fff`는 사용하지 않는다.
-   - 프리뷰 빌드를 사용한다면 업로드 명령: `npx wrangler versions upload --config wrangler.reading-calendar.jsonc`
+   - 프리뷰 빌드를 사용한다면 업로드 명령: `npx wrangler versions upload`
+   - 준비해 둔 `wrangler.reading-calendar.jsonc`도 같은 이름을 사용하므로 해당 설정을 지정한 기존 명령은 그대로 사용할 수 있다.
    - workers.dev 주소를 활성화한다. 계정 하위 도메인이 그대로라면 새 주소는
      `https://reading-calendar.waffle4843.workers.dev`이다. 실제 주소는 배포 결과에서 확인한다.
 
-3. 새 주소와 Git 자동 배포를 확인한 후 기본 `wrangler.jsonc`의 이름도 `reading-calendar`로 맞출 수 있다.
-   기존 Worker `fff`는 기록 이전을 마칠 때까지 유지한다.
+3. 새 주소와 Git 자동 배포를 확인하고, 미리 저장한 백업 파일을 가져와 기록을 확인한다.
 
 이 저장소의 설정 파일만으로 GitHub 저장소 이름이나 Cloudflare 대시보드의 연결이 변경되지는 않는다.
 
