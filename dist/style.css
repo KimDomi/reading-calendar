@@ -4,6 +4,8 @@
 
 [hidden]{display:none!important}
 
+.book-content{border-radius:12px;overflow:hidden}
+
 .help-guide{margin:0}.help-guide>div{padding:12px 0;border-bottom:1px solid var(--line)}.help-guide>div:first-child{padding-top:0}.help-guide>div:last-child{border-bottom:0}.help-guide dt{font-size:13px;font-weight:650;margin:0 0 5px;color:var(--text)}.help-guide dd{font-size:13px;line-height:1.7;color:var(--muted);margin:0;overflow-wrap:anywhere}.help-note{padding:12px 14px;border-radius:10px;background:var(--soft);font-size:12px;line-height:1.8;margin:12px 0 0}.help-state{font-size:12px;line-height:1.6;color:var(--muted);text-align:center;margin:12px 0 0}
 
 .backup-upload-title{font-size:13px;color:var(--text);font-weight:600}
@@ -36,7 +38,7 @@ html[data-theme] .grid .day.selected{background:var(--soft);border-color:var(--a
 
 :root{--holiday:#b53d38;--saturday:#3265ba}:root[data-theme=dark]{--holiday:#ff9993;--saturday:#91b9ff}.week span:first-child,.day.day-holiday{color:var(--holiday)}.week span:last-child,.day.day-saturday{color:var(--saturday)}.day.selected.day-holiday{color:#ffe0dd}.day.selected.day-saturday{color:#dceaff}:root[data-theme=dark] .day.selected.day-holiday{color:#78211c}:root[data-theme=dark] .day.selected.day-saturday{color:#164381}
 
-body.is-dragging{user-select:none;cursor:grabbing}.drag-ghost{position:fixed!important;z-index:50;pointer-events:none!important;margin:0!important;opacity:.97;border-color:var(--accent);box-shadow:0 16px 40px #0005;will-change:transform;transform-origin:30% 50%}.drag-ghost .handle{cursor:grabbing}.plan-group>.book.dragging{opacity:.22;border-style:dashed}.plan-group>.book{position:relative;overflow:visible}.plan-group>.book .progress{overflow:hidden;border-radius:0 0 12px 12px}.drop-before::before,.drop-after::after{content:"";position:absolute;left:0;right:0;height:4px;border-radius:4px;background:var(--accent);box-shadow:0 0 0 3px var(--surface);z-index:2;pointer-events:none}.drop-before::before{top:-8px}.drop-after::after{bottom:-8px}:root[data-theme=dark] .plan-group.drop-target{outline-color:var(--accent)}
+body.is-dragging{user-select:none;cursor:grabbing}.drag-ghost{position:fixed!important;z-index:50;pointer-events:none!important;margin:0!important;opacity:.97;border-color:var(--accent);box-shadow:0 16px 40px #0005;will-change:transform;transform-origin:30% 50%}.drag-ghost .handle{cursor:grabbing}.plan-group>.book.dragging{opacity:.22;border-style:dashed}.plan-group>.book{position:relative;overflow:visible}.plan-group>.book .progress{overflow:hidden;border-radius:0}.drop-before::before,.drop-after::after{content:"";position:absolute;left:0;right:0;height:4px;border-radius:4px;background:var(--accent);box-shadow:0 0 0 3px var(--surface);z-index:2;pointer-events:none}.drop-before::before{top:-8px}.drop-after::after{bottom:-8px}:root[data-theme=dark] .plan-group.drop-target{outline-color:var(--accent)}
 
 .hsv-channel input[type=range]{appearance:none;-webkit-appearance:none;border-radius:20px!important;height:18px!important;box-shadow:inset 0 0 0 1px #8885}.hsv-channel input[data-range=h]{background:linear-gradient(to right,#f00,#ff0,#0f0,#0ff,#00f,#f0f,#f00)!important}.hsv-channel input[type=range]::-webkit-slider-thumb{appearance:none;-webkit-appearance:none;width:24px;height:24px;border-radius:50%;background:#fff;border:2px solid #555;box-shadow:0 1px 4px #0005}.hsv-channel input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#fff;border:2px solid #555;box-shadow:0 1px 4px #0005}
 
@@ -44,7 +46,7 @@ body.is-dragging{user-select:none;cursor:grabbing}.drag-ghost{position:fixed!imp
 
 #toast{text-align:center;width:max-content;max-width:calc(100% - 40px);padding:14px 20px;border:1px solid #ffffff12;border-radius:16px;line-height:1.6;box-shadow:0 8px 28px #0003}#toast button{display:block;width:100%;margin:10px 0 0;padding:8px 16px;min-height:40px;border-radius:9px;background:#ffffff12;color:#f0f0f3;text-decoration:none;font-weight:650}#toast button:hover{background:#ffffff20}#toast button:focus-visible{outline:2px solid #eeeeF2;outline-offset:2px}
 
-.plan-group>.book>.bookrow{min-height:99px}.plan-group>.empty{min-height:104px;margin:10px 0;padding:15px 12px;display:grid;place-items:center}
+.plan-group>.book>.book-content>.bookrow{min-height:99px}.plan-group>.empty{min-height:104px;margin:10px 0;padding:15px 12px;display:grid;place-items:center}
 
 #main>.settings-card:first-child{margin-top:0}
 
