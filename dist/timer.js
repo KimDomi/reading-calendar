@@ -45,14 +45,15 @@ export function mountTimer(root) {
   const panel = root.querySelector('.reading-timer'), center=panel.querySelector('.timer-center'), number=panel.querySelector('[name=timerMinutes]'), slider=panel.querySelector('.timer-slider');
   const alignClock = () => panel.style.setProperty('--timer-nav-height', (document.querySelector('nav')?.getBoundingClientRect().height || 84)+'px');
   alignClock();window.addEventListener('resize',alignClock);
-  let disposed=false, lock=null, attempted=false, lockEpoch=0, animation=null;
+  let disposed=false, lock=null, attempted=false, lockEpoch=0, animation=null, drawnKey='';
+  const wedge=panel.querySelector('.timer-wedge');
   function paintSector() {
     const fraction=remainingTime(timer)/(timer.minutes*60000);
-    panel.querySelector('.timer-wedge').setAttribute('d',sectorPath(fraction));
+    wedge.setAttribute('d',sectorPath(fraction));
   }
   function animate() {
     animation=null;
-    if(disposed||timer.status!=='running')return;
+    if(disposed||document.hidden||timer.status!=='running')return;
     paintSector();
     if(remainingTime(timer)===0){draw();return;}
     animation=requestAnimationFrame(animate);
@@ -78,13 +79,17 @@ export function mountTimer(root) {
   }
   function draw() {
     finishIfNeeded();
+    updateLock();
+    if(timer.status==='running'&&!document.hidden&&animation===null)animation=requestAnimationFrame(animate);
+    else if((timer.status!=='running'||document.hidden)&&animation!==null){cancelAnimationFrame(animation);animation=null;}
+    const key=timer.status+':'+timer.minutes+':'+saveFailed;
+    if(key===drawnKey)return;
+    drawnKey=key;
     slider.style.setProperty('--slider-progress',((Number(slider.value)-Number(slider.min))/(Number(slider.max)-Number(slider.min))*100)+'%');
     const started=timer.status!=='idle', running=timer.status==='running';
     panel.classList.toggle('timer-started',started);
     panel.classList.toggle('timer-running',running);
     paintSector();
-    if(running&&animation===null)animation=requestAnimationFrame(animate);
-    else if(!running&&animation!==null){cancelAnimationFrame(animation);animation=null;}
     panel.querySelectorAll('.timer-numbers span').forEach((el,i)=>{el.textContent=i===0?String(timer.minutes):String(i*timer.minutes/4)});
     panel.querySelector('.timer-setup').hidden=started;
     panel.querySelector('.timer-reset').hidden=!started;
@@ -96,7 +101,6 @@ export function mountTimer(root) {
     statusEl.classList.toggle('sr-only',timer.status!=='complete');
     panel.querySelectorAll('[data-minutes]').forEach(el=>el.setAttribute('aria-pressed',String(Number(el.dataset.minutes)===timer.minutes)));
     panel.querySelector('.timer-storage').textContent=saveFailed?'타이머 상태를 저장하지 못했어요. 새로고침하면 시간이 복원되지 않을 수 있어요.':'';
-    updateLock();
   }
   function setMinutes(value) {
     if(timer.status!=='idle'||!Number.isInteger(value)||value<1||value>1440)return;
@@ -115,6 +119,7 @@ export function mountTimer(root) {
     else {timer.endsAt=Date.now()+timer.remaining;timer.status='running';}
     save();draw();
   };
+  document.addEventListener('visibilitychange',draw);
   draw();const interval=setInterval(draw,1000);
-  return ()=>{disposed=true;clearInterval(interval);window.removeEventListener('resize',alignClock);if(animation!==null)cancelAnimationFrame(animation);updateLock();};
+  return ()=>{disposed=true;clearInterval(interval);document.removeEventListener('visibilitychange',draw);window.removeEventListener('resize',alignClock);if(animation!==null)cancelAnimationFrame(animation);updateLock();};
 }
