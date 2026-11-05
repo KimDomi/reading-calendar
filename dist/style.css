@@ -4,7 +4,7 @@
 
 [hidden]{display:none!important}
 
-.plan-group>.empty{min-height:93px;margin:10px 0;padding:15px 12px;display:grid;place-items:center}
+.plan-group>.book>.bookrow{min-height:99px}.plan-group>.empty{min-height:104px;margin:10px 0;padding:15px 12px;display:grid;place-items:center}
 
 #main>.settings-card:first-child{margin-top:0}
 
