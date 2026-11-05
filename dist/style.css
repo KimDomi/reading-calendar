@@ -139,6 +139,8 @@ html .appearance-card .theme-option{font-size:12px;min-width:0;gap:5px}
 html .appearance-card .theme-option>span{white-space:nowrap}
 html .appearance-card .theme-symbol{font-size:18px;flex-shrink:0}
 
+
+
 .reading-timer .timer-setup{margin-top:12px;padding:12px}.timer-setup .timer-duration{justify-content:center;gap:12px}.timer-setup .timer-duration>span{gap:6px}.timer-setup .timer-duration input{width:64px;min-height:40px;padding:6px}.timer-setup .timer-slider{margin:6px 0}.timer-setup .timer-presets{gap:6px}.reading-timer .timer-digital{display:block;margin:0 0 12px;font-size:32px;font-weight:600;line-height:36px;font-variant-numeric:tabular-nums;letter-spacing:.04em;color:var(--text)}.reading-timer.timer-started .timer-digital{position:fixed;left:50%;top:calc(var(--timer-center-y) - var(--timer-diameter)/2 - 48px);transform:translateX(-50%);width:var(--timer-diameter);margin:0;pointer-events:none}
 
 .settings-section>summary{padding:6px 16px;min-height:56px;line-height:24px}.settings-section>summary::after{display:none}.settings-expander{display:grid;place-items:center;width:44px;height:44px;flex-shrink:0;margin-left:auto;margin-right:-10px;color:var(--muted)}.settings-section[open]>summary .settings-expander>.ui-icon{transform:rotate(180deg)}.settings-card.data-card{padding:0}.data-card .settings-title{min-height:56px;padding:6px 16px}.data-card .settings-title h2{font-weight:650;line-height:24px}.data-card .info-help{position:relative;top:auto;right:auto;transform:none}.data-card .info-help{margin-right:-10px}.data-card .settings-content>.add{margin:0}
@@ -160,3 +162,12 @@ html .analog-time-picker h2{margin-bottom:12px;font-size:16px}
 .analog-time-picker .tp-manual{padding:12px 0;gap:8px}
 html .analog-time-picker .tp-manual input{font-size:24px;min-height:48px}
 @media(max-width:600px){html dialog.time-picker.analog-time-picker{position:fixed;inset:0;margin:auto;max-height:calc(100dvh - 24px - env(safe-area-inset-bottom))}}
+
+/* Size the timer to the space between the page header and bottom navigation. */
+main:has(>.reading-timer){padding-top:0;padding-bottom:0}
+.reading-timer{--timer-content-top:56px;--timer-space:calc(100dvh - var(--timer-content-top) - var(--timer-nav-height));--timer-gap:clamp(12px,3dvh,28px);--timer-readout-space:0px;--timer-center-y:calc(var(--timer-content-top) + var(--timer-space)/2);--timer-diameter:min(340px,calc(100vw - 44px),max(144px,calc(var(--timer-space) - 240px)));display:grid;align-content:center;justify-items:center;row-gap:var(--timer-gap);min-height:var(--timer-space);padding:16px 0}
+.reading-timer.timer-show-digits{--timer-readout-space:calc(36px + var(--timer-gap))}
+.reading-timer:not(.timer-started) .timer-clock{width:min(340px,100%,max(144px,calc(var(--timer-space) - 32px - var(--timer-setup-height,166px) - var(--timer-gap) - var(--timer-readout-space))));margin:0}
+.reading-timer:not(.timer-started) .timer-setup{width:100%;margin:0}
+.reading-timer:not(.timer-started) .timer-digital{margin:0}
+@media(max-height:480px){.reading-timer{padding-bottom:calc(var(--timer-nav-height) + 16px)}.reading-timer.timer-started .timer-clock,.reading-timer.timer-started .timer-digital,.reading-timer.timer-started .timer-reset,.reading-timer.timer-started .timer-status:not(.sr-only){position:relative;inset:auto;transform:none;margin:0}.reading-timer.timer-started .timer-clock{width:var(--timer-diameter)}.reading-timer.timer-started .timer-reset{margin:0}.reading-timer.timer-started .timer-status:not(.sr-only)~.timer-reset{top:auto}}

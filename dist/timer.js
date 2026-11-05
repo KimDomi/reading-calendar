@@ -66,7 +66,11 @@ export function mountTimer(root,getEstimatedMinutes=()=>0) {
     try{updateSetting('timerColor',hex);}catch{settings.timerColor=previous;throw Error('색상을 저장하지 못했어요. 다시 시도해 주세요.');}
     draw();
   }});
-  const alignClock = () => panel.style.setProperty('--timer-nav-height', (document.querySelector('nav')?.getBoundingClientRect().height || 84)+'px');
+  const alignClock = () => {
+    panel.style.setProperty('--timer-nav-height',(document.querySelector('nav')?.getBoundingClientRect().height||84)+'px');
+    panel.style.setProperty('--timer-content-top',Math.max(0,root.getBoundingClientRect().top+window.scrollY)+'px');
+    panel.style.setProperty('--timer-setup-height',(panel.querySelector('.timer-setup').getBoundingClientRect().height||166)+'px');
+  };
   alignClock();window.addEventListener('resize',alignClock);
   let disposed=false, lock=null, attempted=false, lockEpoch=0, animation=null, drawnKey='';
   const wedge=panel.querySelector('.timer-wedge');
