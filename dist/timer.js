@@ -78,6 +78,7 @@ export function mountTimer(root) {
   }
   function draw() {
     finishIfNeeded();
+    slider.style.setProperty('--slider-progress',((Number(slider.value)-Number(slider.min))/(Number(slider.max)-Number(slider.min))*100)+'%');
     const started=timer.status!=='idle', running=timer.status==='running';
     panel.classList.toggle('timer-started',started);
     panel.classList.toggle('timer-running',running);
