@@ -4,6 +4,8 @@
 
 [hidden]{display:none!important}
 
+html #toast{background:var(--soft);color:var(--text);border:1px solid var(--line);box-shadow:0 6px 20px #00000014}html #toast button{background:var(--card);color:var(--text);border:1px solid var(--line)}html #toast button:hover{background:var(--surface)}html #toast button:focus-visible{outline-color:var(--accent)}
+
 .analog-time-picker{--time-selected:#e1e1e7}:root[data-theme=dark] .analog-time-picker{--time-selected:#414147}.tp-hand circle:last-child{fill:var(--time-selected)}
 
 .time-picker.analog-time-picker{width:min(360px,calc(100% - 28px))}
