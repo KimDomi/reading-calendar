@@ -171,9 +171,10 @@ html .analog-time-picker .tp-manual input{font-size:24px;min-height:48px}
 
 /* Size the timer to the space between the page header and bottom navigation. */
 main:has(>.reading-timer){padding-top:0;padding-bottom:0}
-.reading-timer{--timer-content-top:56px;--timer-space:calc(100dvh - var(--timer-content-top) - var(--timer-nav-height));--timer-gap:clamp(12px,3dvh,28px);--timer-readout-space:0px;--timer-center-y:calc(var(--timer-content-top) + var(--timer-space)/2);--timer-diameter:min(340px,calc(100vw - 44px),max(144px,calc(var(--timer-space) - 240px)));display:grid;align-content:center;justify-items:center;row-gap:var(--timer-gap);min-height:var(--timer-space);padding:16px 0}
+.reading-timer{--timer-content-top:56px;--timer-space:calc(100dvh - var(--timer-content-top) - var(--timer-nav-height));--timer-gap:clamp(12px,3dvh,28px);--timer-readout-space:0px;--timer-center-y:calc(var(--timer-content-top) + var(--timer-space)/2);--timer-diameter:min(360px,calc(100vw - 24px),max(144px,calc(var(--timer-space) - 208px)));display:grid;grid-template-columns:minmax(0,1fr);align-content:center;justify-items:center;row-gap:var(--timer-gap);min-height:var(--timer-space);padding:16px 0}
 .reading-timer.timer-show-digits{--timer-readout-space:calc(36px + var(--timer-gap))}
-.reading-timer:not(.timer-started) .timer-clock{width:min(340px,100%,max(144px,calc(var(--timer-space) - 32px - var(--timer-setup-height,166px) - var(--timer-gap) - var(--timer-readout-space))));margin:0}
+.reading-timer .timer-clock{border:0;box-shadow:none;background:transparent}
+.reading-timer:not(.timer-started) .timer-clock{width:min(360px,calc(100vw - 24px),max(144px,calc(var(--timer-space) - 32px - var(--timer-setup-height,166px) - var(--timer-gap) - var(--timer-readout-space))));margin:0}
 .reading-timer:not(.timer-started) .timer-setup{width:100%;margin:0}
 .reading-timer:not(.timer-started) .timer-digital{margin:0}
 @media(max-height:480px){.reading-timer{padding-bottom:calc(var(--timer-nav-height) + 16px)}.reading-timer.timer-started .timer-clock,.reading-timer.timer-started .timer-digital,.reading-timer.timer-started .timer-reset,.reading-timer.timer-started .timer-status:not(.sr-only){position:relative;inset:auto;transform:none;margin:0}.reading-timer.timer-started .timer-clock{width:var(--timer-diameter)}.reading-timer.timer-started .timer-reset{margin:0}.reading-timer.timer-started .timer-status:not(.sr-only)~.timer-reset{top:auto}}
