@@ -120,8 +120,9 @@ html :is(.choice-options input:checked+span,.theme-option:has(input:checked),.re
   background:var(--selection-bg);color:var(--text);border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent);font-weight:650
 }
 html .analog-time-picker{--time-selected:var(--selection-bg)}
+html .tp-period{padding:3px;gap:2px;overflow:visible}
+html .tp-period button{border:1px solid transparent;border-radius:6px}
 html .tp-digit[aria-pressed=true],html .tp-period button[aria-pressed=true]{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
-html .tp-period button{border:1px solid transparent}
 nav [data-tab=timer] svg{width:21px;height:21px}
 html .appearance-card .theme-options{display:grid;grid-template-columns:1fr 1fr 1.3fr;gap:8px}
 html .appearance-card .theme-option{font-size:12px;min-width:0;gap:5px}
