@@ -15,6 +15,8 @@ const coloredPreferences={...preferences,timerColor:'#859dc1'};
 assert.deepEqual(parseBackup(JSON.stringify(makeBackup(state,undefined,coloredPreferences))).settings,coloredPreferences);
 assert.throws(()=>makeBackup(state,undefined,{...preferences,timerColor:'red;position:fixed'}));
 assert.throws(()=>makeBackup(state,undefined,{...preferences,timerColor:['#859dc1']}));
+for(const showTimerDigits of [true,false])assert.equal(parseBackup(JSON.stringify(makeBackup(state,undefined,{...preferences,showTimerDigits}))).settings.showTimerDigits,showTimerDigits);
+assert.throws(()=>makeBackup(state,undefined,{...preferences,showTimerDigits:'true'}));
 assert.equal(parseBackup(text).settings,undefined);
 for(const settings of [{...preferences,theme:'blue'},{...preferences,notifications:'yes'},{...preferences,notificationTime:'25:00'}])assert.throws(()=>parseBackup(JSON.stringify({...JSON.parse(text),settings})));
 const entries=new Map([['reading-calendar-v1','original'],['reading-calendar-settings-v1','old-settings']]);

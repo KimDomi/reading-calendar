@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import {remainingTime,sectorPath} from './dist/timer.js';
+import {remainingTime,sectorPath,formatRemainingTime} from './dist/timer.js';
 const running = {status:'running', minutes:25, endsAt:2000000, remaining:1500000};
 assert.equal(remainingTime(running, 500000), 1500000);
 assert.equal(remainingTime(running, 560000), 1440000);
@@ -17,3 +17,11 @@ assert.ok(sectorPath(.25).includes('A50 50 0 0 1 100 50'));
 assert.ok(sectorPath(.75).includes('A50 50 0 1 1 0'));
 assert.ok(!sectorPath(.99999).includes('NaN'));
 console.log('PASS vector sector geometry for empty, full and partial circles');
+assert.equal(formatRemainingTime(0),'00:00');
+assert.equal(formatRemainingTime(1),'00:01');
+assert.equal(formatRemainingTime(59999),'01:00');
+assert.equal(formatRemainingTime(1500000),'25:00');
+assert.equal(formatRemainingTime(3600000),'1:00:00');
+assert.equal(formatRemainingTime(86400000),'24:00:00');
+assert.equal(formatRemainingTime(-1),'00:00');
+console.log('PASS numeric timer rounding, hour/day durations and zero boundary');

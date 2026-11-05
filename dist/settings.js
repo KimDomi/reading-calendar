@@ -3,7 +3,7 @@ import {normalizeRestDays} from './rest-days.js?v=270c12ac63f1';
 import {syncSystemBars,isNativeApp} from './native.js?v=bcb0856dfeee';
 const key = 'reading-calendar-settings-v1';
 export const DEFAULT_TIMER_COLOR='#7d9b8a';
-export const settings = {theme: 'system', notifications: false, notificationTime: '21:00',timerColor:DEFAULT_TIMER_COLOR};
+export const settings = {theme: 'system', notifications: false, notificationTime: '21:00',timerColor:DEFAULT_TIMER_COLOR,showTimerDigits:false};
 const validTime = value => typeof value === 'string' && /^([01]\d|2[0-3]):[0-5]\d$/.test(value);
 try {
   const saved = JSON.parse(localStorage.getItem(key));
@@ -11,6 +11,7 @@ try {
   if (typeof saved?.notifications === 'boolean') settings.notifications = saved.notifications;
   if (validTime(saved?.notificationTime)) settings.notificationTime = saved.notificationTime;
   if (typeof saved?.timerColor==='string'&&/^#[0-9a-f]{6}$/i.test(saved.timerColor)) settings.timerColor=saved.timerColor;
+  if (typeof saved?.showTimerDigits==='boolean') settings.showTimerDigits=saved.showTimerDigits;
 } catch {}
 const system = typeof matchMedia === 'function' ? matchMedia('(prefers-color-scheme: dark)') : null;
 export function applyTheme() {
@@ -26,6 +27,7 @@ export function updateSetting(name, value) {
   else if (name === 'notifications' && typeof value === 'boolean') settings.notifications = value;
   else if (name === 'notificationTime' && validTime(value)) settings.notificationTime = value;
   else if (name === 'timerColor' && typeof value==='string'&&/^#[0-9a-f]{6}$/i.test(value)) settings.timerColor=value;
+  else if (name === 'showTimerDigits' && typeof value==='boolean') settings.showTimerDigits=value;
   else return;
   applyTheme();
   localStorage.setItem(key, JSON.stringify(settings));
@@ -40,6 +42,7 @@ export function settingsHTML(restDays = {}) {
   <fieldset class="theme-options"><legend class="sr-only">화면 모드 선택</legend>${[['light','라이트'],['dark','다크'],['system','시스템 설정']].map(([value,label])=>`<label class="theme-option"><input type="radio" name="theme" value="${value}" ${settings.theme===value?'checked':''}><span class="theme-symbol" aria-hidden="true">${icon(value)}</span><span>${label}</span></label>`).join('')}</fieldset>
   </div></details>
   <details class="settings-card settings-section" data-settings-section="notifications" ${openSections.has('notifications')?'open':''}><summary>독서 알림${expander}</summary><div class="settings-content"><div class="row"><div><span id="notification-label" class="setting-label">알림 켜기</span><p class="small" id="notification-description">알림 기능을 준비하고 있어요.</p></div><button type="button" class="setting-switch" role="switch" aria-checked="${settings.notifications}" aria-labelledby="notification-label" aria-describedby="notification-description" data-setting="notifications"><span class="switch-thumb"></span><span class="sr-only">${settings.notifications?'켜짐':'꺼짐'}</span></button></div><label class="field">알림 시간<input type="time" name="notificationTime" value="${settings.notificationTime}" ${settings.notifications?'':'disabled'}></label><div class="note">켜기·끄기와 시간만 미리 저장해요. 정한 시간까지 독서 기록이 없으면 알려주는 기능은 ${isNativeApp()?'후속 버전':'앱 버전'}에서 제공할 예정이에요. 현재 알림은 발송되지 않아요.</div></div></details>
+  <details class="settings-card settings-section" data-settings-section="timer" ${openSections.has('timer')?'open':''}><summary>독서 타이머${expander}</summary><div class="settings-content"><div class="row"><span id="timer-display-label" class="setting-label">남은 시간 표시</span><button type="button" class="setting-switch" role="switch" aria-checked="${settings.showTimerDigits}" aria-labelledby="timer-display-label" data-setting="showTimerDigits"><span class="switch-thumb"></span><span class="sr-only">${settings.showTimerDigits?'켜짐':'꺼짐'}</span></button></div></div></details>
   <details class="settings-card settings-section rest-card" data-settings-section="rest" ${openSections.has('rest')?'open':''}><summary>독서 쉬는 날${expander}</summary><div class="settings-content">
     <fieldset class="rest-weekdays"><legend>매주 쉬는 요일</legend><div>${[1,2,3,4,5,6,0].map(d=>`<button type="button" data-rest-weekday="${d}" aria-label="${weekdayNames[d]}요일 휴식" aria-pressed="${rest.weekdays.includes(d)}">${weekdayNames[d]}</button>`).join('')}</div></fieldset>
     <label class="rest-holidays"><input type="checkbox" name="restPublicHolidays" ${rest.publicHolidays?'checked':''}>공휴일에도 쉬기</label>

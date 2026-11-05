@@ -1,6 +1,6 @@
 import {icon} from './icons.js?v=8fc4a110ec6b';
 import {screenLockAvailable,requestScreenLock} from './native.js?v=bcb0856dfeee';
-import {settings,updateSetting,DEFAULT_TIMER_COLOR} from './settings.js?v=4e4036b695b7';
+import {settings,updateSetting,DEFAULT_TIMER_COLOR} from './settings.js?v=36968829603d';
 import {openTimerColorPicker,closeTimerColorPicker} from './timer-color-picker.js?v=a8487b6ddbf4';
 export {closeTimerColorPicker};
 const storageKey = 'reading-calendar-timer-v1';
@@ -11,6 +11,10 @@ try {
 } catch {}
 export function remainingTime(state, now = Date.now()) {
   return Math.max(0, Math.min(state.minutes * 60000, state.status === 'running' ? state.endsAt - now : state.remaining));
+}
+export function formatRemainingTime(milliseconds){
+  const seconds=Math.ceil(Math.max(0,Number.isFinite(milliseconds)?milliseconds:0)/1000),hours=Math.floor(seconds/3600),minutes=Math.floor(seconds%3600/60),pad=value=>String(value).padStart(2,'0');
+  return hours?`${hours}:${pad(minutes)}:${pad(seconds%60)}`:`${pad(minutes)}:${pad(seconds%60)}`;
 }
 export function timerIsRunning(){return timer.status==='running'&&remainingTime(timer)>0;}
 export function sectorPath(fraction) {
@@ -27,7 +31,8 @@ function finishIfNeeded() {
 }
 export function timerHTML() {
   finishIfNeeded();
-  return `<section class="reading-timer" aria-label="독서 타이머" style="--timer-color:${settings.timerColor}">
+  return `<section class="reading-timer${settings.showTimerDigits?' timer-show-digits':''}" aria-label="독서 타이머" style="--timer-color:${settings.timerColor}">
+    <output class="timer-digital" role="timer" aria-label="남은 독서 시간" aria-live="off" ${settings.showTimerDigits?'':'hidden'}>${formatRemainingTime(remainingTime(timer))}</output>
     <div class="timer-clock">
       <svg class="timer-sector" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="50" class="timer-sector-base"/><path class="timer-wedge"/></svg>
       <button class="timer-color-trigger" type="button" aria-label="타이머 색상 변경" aria-haspopup="dialog"></button>
@@ -49,6 +54,13 @@ const play=icon('play'),pause=icon('pause');
 export function mountTimer(root,getEstimatedMinutes=()=>0) {
   const panel = root.querySelector('.reading-timer'), center=panel.querySelector('.timer-center'), number=panel.querySelector('[name=timerMinutes]'), slider=panel.querySelector('.timer-slider');
   const colorTrigger=panel.querySelector('.timer-color-trigger');
+  const digital=panel.querySelector('.timer-digital');
+  function paintReadout(){
+    if(!settings.showTimerDigits){if(!digital.hidden)digital.hidden=true;return;}
+    if(digital.hidden)digital.hidden=false;
+    const value=formatRemainingTime(remainingTime(timer));
+    if(digital.textContent!==value)digital.textContent=value;
+  }
   colorTrigger.onclick=()=>openTimerColorPicker({color:settings.timerColor,defaultColor:DEFAULT_TIMER_COLOR,trigger:colorTrigger,onApply:hex=>{
     const previous=settings.timerColor;
     try{updateSetting('timerColor',hex);}catch{settings.timerColor=previous;throw Error('색상을 저장하지 못했어요. 다시 시도해 주세요.');}
@@ -66,6 +78,7 @@ export function mountTimer(root,getEstimatedMinutes=()=>0) {
     animation=null;
     if(disposed||document.hidden||timer.status!=='running')return;
     paintSector();
+    if(settings.showTimerDigits)paintReadout();
     if(remainingTime(timer)===0){draw();return;}
     animation=requestAnimationFrame(animate);
   }
@@ -90,10 +103,11 @@ export function mountTimer(root,getEstimatedMinutes=()=>0) {
   }
   function draw() {
     finishIfNeeded();
+    paintReadout();
     updateLock();
     if(timer.status==='running'&&!document.hidden&&animation===null)animation=requestAnimationFrame(animate);
     else if((timer.status!=='running'||document.hidden)&&animation!==null){cancelAnimationFrame(animation);animation=null;}
-    const key=timer.status+':'+timer.minutes+':'+saveFailed+':'+settings.timerColor;
+    const key=timer.status+':'+timer.minutes+':'+saveFailed+':'+settings.timerColor+':'+settings.showTimerDigits;
     if(key===drawnKey)return;
     drawnKey=key;
     panel.style.setProperty('--timer-color',settings.timerColor);
@@ -101,6 +115,7 @@ export function mountTimer(root,getEstimatedMinutes=()=>0) {
     const started=timer.status!=='idle', running=timer.status==='running';
     panel.classList.toggle('timer-started',started);
     panel.classList.toggle('timer-running',running);
+    panel.classList.toggle('timer-show-digits',settings.showTimerDigits);
     paintSector();
     panel.querySelectorAll('.timer-numbers span').forEach((el,i)=>{el.textContent=i===0?String(timer.minutes):String(i*timer.minutes/4)});
     panel.querySelector('.timer-setup').hidden=started;
