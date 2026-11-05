@@ -4,6 +4,8 @@
 
 [hidden]{display:none!important}
 
+.app:has(nav [data-tab="calendar"].active)>header{display:none}
+
 .backup-check{display:flex;align-items:flex-start;gap:9px;font-size:12px;line-height:1.7;margin:15px 0}.backup-check input{width:18px;height:18px;flex-shrink:0;margin-top:2px}
 
 .book-colors{border:0;min-inline-size:0;padding:0;margin:16px 0;position:relative}.book-colors legend{font-size:12px;color:var(--muted);margin-bottom:12px}.color-options{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:clamp(6px,2vw,12px);padding:5px;width:100%}.color-swatch,.custom-color{width:100%;height:auto;aspect-ratio:1;min-width:0;padding:0;border-radius:50%;border:2px solid transparent}.color-swatch{background:var(--swatch)}.custom-color{border:1px dashed var(--muted);font-size:clamp(18px,5vw,25px);background:var(--soft);line-height:1}.color-swatch[aria-pressed=true],.custom-color[aria-pressed=true]{outline:2px solid var(--text);outline-offset:3px}.color-swatch[aria-pressed=true]::after{content:'✓';color:#fff;font-size:clamp(13px,4vw,20px);text-shadow:0 1px 3px #0009}.custom-color.has-custom{color:#fff;text-shadow:0 1px 3px #0009}.native-color-picker{position:absolute!important;width:1px!important;height:1px!important;opacity:0;padding:0!important;margin:0!important;bottom:0;right:0;pointer-events:none}
