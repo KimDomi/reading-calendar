@@ -123,7 +123,7 @@ export function mountTimer(root,getEstimatedMinutes=()=>0) {
     paintSector();
     panel.querySelectorAll('.timer-numbers span').forEach((el,i)=>{el.textContent=i===0?String(timer.minutes):String(i*timer.minutes/4)});
     panel.querySelector('.timer-setup').hidden=started;
-    panel.querySelector('.timer-reset').hidden=!started;
+    panel.querySelector('.timer-reset').hidden=timer.status!=='paused';
     const label=running?'타이머 일시정지':timer.status==='paused'?'타이머 재개':timer.status==='complete'?'시간 다시 설정':'타이머 시작';
     center.setAttribute('aria-label',label);
     center.innerHTML=running?pause:play;
