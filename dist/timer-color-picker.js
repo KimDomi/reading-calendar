@@ -7,7 +7,8 @@ export function openTimerColorPicker({color,defaultColor,trigger,onApply}){
   const dialog=document.createElement('dialog');dialog.className='timer-color-picker';
   dialog.setAttribute('aria-label','타이머 색상 선택');
   const presets=[[defaultColor,'기본 · 세이지'],['#859dc1','블루'],['#b194b5','라벤더'],['#cf9875','테라코타'],['#8d8d96','그레이']];
-  dialog.innerHTML=`<h2 tabindex="-1" autofocus>타이머 색상</h2><div class="timer-color-presets" role="group" aria-label="추천 색상">${presets.map(([hex,label])=>`<button type="button" data-timer-color="${hex}" style="--swatch:${hex}" aria-label="${label}" title="${label}"></button>`).join('')}</div>${hsvPickerHTML('timer-hsv','미리보기')}<p class="error timer-color-error" role="alert" hidden></p>`;
+  dialog.innerHTML=`<h2 tabindex="-1" autofocus>타이머 색상</h2>${hsvPickerHTML('timer-hsv','미리보기')}<p class="error timer-color-error" role="alert" hidden></p>`;
+  dialog.querySelector('.hsv-actions').insertAdjacentHTML('beforebegin',`<div class="timer-color-presets" role="group" aria-label="추천 색상">${presets.map(([hex,label])=>`<button type="button" data-timer-color="${hex}" style="--swatch:${hex}" aria-label="${label}" title="${label}"></button>`).join('')}</div>`);
   const close=()=>{dismiss=null;dialog.close();dialog.remove();if(trigger.isConnected)trigger.focus();};dismiss=close;
   const picker=mountHSVPicker(dialog.querySelector('.hsv-picker'),{
     onClose:close,
