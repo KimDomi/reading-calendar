@@ -96,11 +96,13 @@ function updateDragVisual(){
  if(!drag?.moved)return;
  if(!drag.ghost){const ghost=drag.card.cloneNode(true);ghost.classList.remove('dragging');ghost.classList.add('drag-ghost');ghost.setAttribute('aria-hidden','true');ghost.inert=true;ghost.querySelector('.graphbox')?.remove();Object.assign(ghost.style,{width:drag.width+'px',left:'0',top:'0'});document.body.append(ghost);drag.ghost=ghost;drag.card.classList.add('dragging');document.body.classList.add('is-dragging')}
  drag.ghost.style.transform='translate3d('+(drag.x-drag.offsetX)+'px,'+(drag.y-drag.offsetY)+'px,0) rotate(1deg)';
- document.querySelectorAll('.drop-target,.drop-before,.drop-after').forEach(x=>x.classList.remove('drop-target','drop-before','drop-after'));
- const target=document.elementFromPoint(drag.x,drag.y),group=target?.closest('[data-group]');if(!group)return;
- group.classList.add('drop-target');const book=target.closest('[data-book]'),source=drag.card.closest('[data-group]');
- if(group===source&&group.dataset.group==='sequence'&&book&&book!==drag.card){const cards=[...group.querySelectorAll('[data-book]')];book.classList.add(cards.indexOf(drag.card)<cards.indexOf(book)?'drop-after':'drop-before')}
- else if(group!==source){const cards=[...group.querySelectorAll('[data-book]')];cards.at(-1)?.classList.add('drop-after')}
+ const target=document.elementFromPoint(drag.x,drag.y),group=target?.closest('[data-group]'),book=target?.closest('[data-book]'),source=drag.card.closest('[data-group]');
+ document.querySelectorAll('[data-group]').forEach(el=>el.classList.toggle('drop-target',el===group));
+ let marker=null,position=null;
+ if(group===source&&group?.dataset.group==='sequence'&&book&&book!==drag.card){const cards=[...group.querySelectorAll('[data-book]')];marker=book;position=cards.indexOf(drag.card)<cards.indexOf(book)?'drop-after':'drop-before'}
+ else if(group&&group!==source){marker=[...group.querySelectorAll('[data-book]')].at(-1);position='drop-after'}
+ document.querySelectorAll('.drop-before,.drop-after').forEach(el=>{if(el!==marker||position!=='drop-before')el.classList.remove('drop-before');if(el!==marker||position!=='drop-after')el.classList.remove('drop-after')});
+ if(marker&&position)marker.classList.add(position);
 }
 function dragScroll(){if(!drag)return;if(drag.moved){const edge=90,y=drag.y;let amount=y<edge?-10:y>innerHeight-edge?10:0;if(amount)window.scrollBy(0,amount);updateDragVisual()}dragFrame=requestAnimationFrame(dragScroll)}
 document.addEventListener('pointerdown',e=>{let h=e.target.closest('[data-handle]');if(h&&e.isPrimary!==false&&e.button===0){const card=h.closest('.book'),rect=card.getBoundingClientRect();drag={id:h.dataset.handle,card,width:rect.width,offsetX:e.clientX-rect.left,offsetY:e.clientY-rect.top,x:e.clientX,y:e.clientY,startX:e.clientX,startY:e.clientY,moved:false};h.setPointerCapture(e.pointerId);dragFrame=requestAnimationFrame(dragScroll)}});
