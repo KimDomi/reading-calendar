@@ -8,5 +8,8 @@
     "test": "node --experimental-vm-modules test-startup.mjs && node test.mjs && node test-backup.mjs && node test-palette.mjs",
     "check": "node --check dist/app.js && npm test",
     "version-assets": "node scripts-versions.mjs"
+  },
+  "devDependencies": {
+    "date-holidays": "3.38.0"
   }
 }

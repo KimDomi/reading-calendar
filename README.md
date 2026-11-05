@@ -6,7 +6,7 @@ store is required.
 
 ## Development
 
-Node.js 20 or newer is recommended. No dependency installation is required.
+Node.js 20 or newer is recommended. Run `npm ci` to install build-time holiday data tools. The deployed browser app requires no runtime dependencies or API calls.
 
 ```sh
 npm run dev
@@ -45,5 +45,4 @@ checks initialization, tab switching and backup-menu initialization; it does not
 substitute for real touch or visual browser testing. Use explicit module parsing,
 not Node's automatic syntax detection, for the browser entry.
 
-Publish through the Sites source workflow with the existing `.openai/hosting.json`
-project ID and audience. No install or build step is necessary.
+Cloudflare Workers builds from `main` using `node scripts-versions.mjs`. This generates Korean public holiday dates (2020–2050) and refreshes browser cache hashes. Newly proclaimed temporary holidays need a data update in `scripts-holidays.mjs`.
