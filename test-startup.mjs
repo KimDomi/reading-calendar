@@ -4,7 +4,7 @@ import vm from 'node:vm';import fs from 'node:fs';import assert from 'node:asser
 const root=new URL('./dist/',import.meta.url);
 async function run(initial){
  const main={innerHTML:''},header={textContent:''},handlers={},file={},modal={open:false,innerHTML:'',showModal(){this.open=true},close(){this.open=false}};
- const elements=new Map([['#main',main],['header h1',header],['#modal',modal],['#backupfile',file],['#toast',{style:{},innerHTML:''}]]);
+ const elements=new Map([['#main',main],['#modal h2',{setAttribute(){}}],['header h1',header],['#modal',modal],['#backupfile',file],['#toast',{style:{},innerHTML:''}]]);
  const local=new Map(initial?[['reading-calendar-v1',JSON.stringify(initial)]]:[]);
  const context=vm.createContext({console,Date,Map,Set,Math,Number,String,JSON,Error,Array,RegExp,structuredClone,crypto:{randomUUID:()=> 'test'},setTimeout:()=>1,clearTimeout:()=>{},localStorage:{getItem:k=>local.get(k)||null,setItem:(k,v)=>local.set(k,v)},document:{querySelector:s=>elements.get(s)||{},querySelectorAll:()=>[],addEventListener:(name,fn)=>{handlers[name]??=[];handlers[name].push(fn)}}});
  const cache=new Map();async function load(file){if(cache.has(file))return cache.get(file);const mod=new vm.SourceTextModule(fs.readFileSync(new URL(file,root),'utf8'),{context,identifier:file});cache.set(file,mod);await mod.link(spec=>load(spec.slice(2).split('?')[0]));return mod}
