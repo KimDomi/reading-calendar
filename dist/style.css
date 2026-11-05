@@ -4,6 +4,8 @@
 
 [hidden]{display:none!important}
 
+html .header-new{background:#e1e1e7;color:#202024;border:1px solid #c8c8d1;box-shadow:0 2px 5px #00000012}html .header-new:hover{background:#d7d7df}html .header-new:active{background:#cdcdd7;box-shadow:inset 0 1px 3px #00000014}
+
 :root{--drop-outline:#b9b9c2}:root[data-theme=dark]{--drop-outline:#62626c}html[data-theme] .plan-group.drop-target{outline:1px dashed var(--drop-outline);outline-offset:4px}
 
 :root{--switch-off:#dedee4;--switch-on:#777780;--switch-thumb:#fff}:root[data-theme=dark]{--switch-off:#3c3c43;--switch-on:#b9b9c3;--switch-thumb:#f8f8fa}html .setting-switch{background:var(--switch-off);box-shadow:inset 0 0 0 1px var(--line)}html .setting-switch[aria-checked=true]{background:var(--switch-on);box-shadow:none}html .setting-switch .switch-thumb{background:var(--switch-thumb);box-shadow:0 1px 4px #0002}
