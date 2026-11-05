@@ -1,0 +1,12 @@
+{
+  "name": "reading-calendar",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node serve.mjs",
+    "test": "node --experimental-vm-modules test-startup.mjs && node test.mjs && node test-backup.mjs && node test-palette.mjs",
+    "check": "node --check dist/app.js && npm test",
+    "version-assets": "node scripts-versions.mjs"
+  }
+}

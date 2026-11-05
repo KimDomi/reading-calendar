@@ -1,2 +1,49 @@
-# fff
-dffd
+# 독서 달력
+
+Dependency-free static app. Browser-local data stays in `reading-calendar-v1`;
+import recovery uses `reading-calendar-pre-import`. No runtime API or cloud data
+store is required.
+
+## Development
+
+Node.js 20 or newer is recommended. No dependency installation is required.
+
+```sh
+npm run dev
+npm run check
+```
+
+The product direction and release gates are tracked in [`ROADMAP.md`](ROADMAP.md).
+
+## Source
+
+- `dist/app.js`: UI, interactions and derived display indexes. Rebuild display
+  indexes on rendering; recalculate schedules only after explicit user actions.
+- `dist/engine.js`: pure allocation, recording, graph and ordering functions.
+- `dist/backup.js`: versioned JSON backup validation and non-destructive merging.
+- `dist/style.css` / `dist/index.html`: responsive layout and entry point.
+
+The backup/import entry belongs in the Settings tab. Records and historical
+allocations must survive mode changes, reordering, pausing and schedule updates.
+Batch confirmations validate all values before committing any progress.
+
+## Before publishing
+
+Run `node scripts-versions.mjs` to refresh content hashes in module imports and
+HTML references. This keeps browser caches from mixing incompatible versions.
+Then run:
+
+```
+node --input-type=module --check < dist/app.js
+node --experimental-vm-modules test-startup.mjs
+node test.mjs
+node test-backup.mjs
+```
+
+The startup test executes the complete module graph with a minimal document. It
+checks initialization, tab switching and backup-menu initialization; it does not
+substitute for real touch or visual browser testing. Use explicit module parsing,
+not Node's automatic syntax detection, for the browser entry.
+
+Publish through the Sites source workflow with the existing `.openai/hosting.json`
+project ID and audience. No install or build step is necessary.

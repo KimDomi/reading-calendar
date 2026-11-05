@@ -1,0 +1,17 @@
+import assert from 'node:assert/strict';
+import {bookPalette} from './dist/palette.js';
+const base = bookPalette([]);
+assert.equal(base.length, 6);
+const active = base.map(([color], i) => ({id: String(i), color: color.toUpperCase(), status: 'active'}));
+const alternate = bookPalette(active);
+assert.equal(alternate.length, 6);
+assert.ok(alternate.every(([color]) => !base.some(([used]) => used === color)));
+assert.ok(bookPalette(active, '0').some(([color]) => color === base[0][0]));
+assert.deepEqual(bookPalette(active.map(b => ({...b, status: 'done'}))), base);
+assert.deepEqual(bookPalette(active.map(b => ({...b, status: 'past'}))), base);
+const many = [...active, ...alternate.map(([color], i) => ({id: `extra${i}`, color, status: 'active'}))];
+const fallback = bookPalette(many);
+assert.equal(new Set(fallback.map(([color]) => color)).size, 6);
+assert.ok(fallback.every(([color]) => !many.some(b => b.color.toLowerCase() === color)));
+assert.deepEqual(bookPalette(many), fallback);
+console.log('PASS: six unique available colors, case normalization, editing, completion, pause, fallback');
