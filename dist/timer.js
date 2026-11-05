@@ -1,4 +1,4 @@
-import {screenLockAvailable,requestScreenLock} from './native.js?v=120096a60ed4';
+import {screenLockAvailable,requestScreenLock} from './native.js?v=bcb0856dfeee';
 const storageKey = 'reading-calendar-timer-v1';
 let timer = {status:'idle', minutes:25, remaining:1500000, endsAt:null};
 try {

@@ -1,5 +1,5 @@
 import {normalizeRestDays} from './rest-days.js?v=270c12ac63f1';
-import {syncSystemBars,isNativeApp} from './native.js?v=120096a60ed4';
+import {syncSystemBars,isNativeApp} from './native.js?v=bcb0856dfeee';
 const key = 'reading-calendar-settings-v1';
 export const settings = {theme: 'system', notifications: false, notificationTime: '21:00'};
 const validTime = value => typeof value === 'string' && /^([01]\d|2[0-3]):[0-5]\d$/.test(value);

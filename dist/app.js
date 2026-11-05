@@ -1,13 +1,13 @@
-import {isNativeApp,storageNotice,exportNativeBackup,installNativeNavigation} from './native.js?v=120096a60ed4';
+import {isNativeApp,storageNotice,exportNativeBackup,installNativeNavigation} from './native.js?v=bcb0856dfeee';
 import {unconfirmedBookIds} from './progress-check.js?v=ef8f5b599017';
 import {mountTimePickers,closeTimePicker} from './time-picker.js?v=4917c894626a';
 import {mountDatePickers,closeDatePicker} from './date-picker.js?v=9042f5d52759';
 import {normalizeRestDays,isRestDay,readingDays,readingFinish} from './rest-days.js?v=270c12ac63f1';
-import {timerHTML,mountTimer,timerIsRunning} from './timer.js?v=458a40aa1b1e';
+import {timerHTML,mountTimer,timerIsRunning} from './timer.js?v=2b47c928c261';
 import {holidays} from './holidays.js?v=e4f0f7db7f96';
 import {mountColorPicker} from './color-picker.js?v=868d08b6d8c5';
 import {bookPalette} from './palette.js?v=f34764add534';
-import {settings,settingsHTML,updateSetting,adoptSettings,rememberSettingsSections} from './settings.js?v=ae1a729f0a82';
+import {settings,settingsHTML,updateSetting,adoptSettings,rememberSettingsSections} from './settings.js?v=ad60f9dcab14';
 import {makeBackup,parseBackup,mergeBackup,validateData,writeImport} from './backup.js?v=f0e66f006d7a';
 import {add,days,recalc,record,recordMany,graph,recommendation,moveBook,isDaily,deadlineMisses} from './engine.js?v=cab576a36d57';
 const today=()=>{let d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`},$=s=>document.querySelector(s),esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),short=d=>`${Number(d.slice(5,7))}/${Number(d.slice(8))}`;

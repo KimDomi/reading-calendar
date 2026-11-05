@@ -20,7 +20,8 @@ try{
     setScreenAwake:async data=>calls.push(data),
     backgroundApp:async()=>backs++
   },SystemBars:{setStyle:async data=>calls.push(data)}};
-  globalThis.Capacitor={isNativePlatform:()=>true,registerPlugin:name=>plugins[name]};
+  // The actual Android injector exposes Plugins and has no registerPlugin function.
+  globalThis.Capacitor={isNativePlatform:()=>true,Plugins:plugins};
   globalThis.window=events;
   const native=await import('./dist/native.js?test=android');
   assert.equal(native.isNativeApp(),true);
@@ -30,6 +31,7 @@ try{
   const lock=await native.requestScreenLock();await lock.release();
   assert.deepEqual(calls.splice(0),[{enabled:true},{enabled:false}]);
   native.syncSystemBars('dark');native.syncSystemBars('light');
+  await Promise.resolve();
   assert.deepEqual(calls.splice(0),[{style:'DARK'},{style:'LIGHT'}]);
   native.installNativeNavigation(()=>handled,()=>resumes++);
   window.dispatchEvent(new Event('reading-back'));assert.equal(backs,0);

@@ -1,4 +1,4 @@
-# reading-calendar Android 0.1.0
+# reading-calendar Android 0.1.1
 
 1차는 Android 7.0 이상에서 설치하는 테스트용 APK다. 스토어 등록용 릴리스는 아직 아니다.
 웹과 Android 앱은 같은 `dist` 코어를 사용하며, APK에는 실행 파일을 포함한다.
@@ -6,7 +6,7 @@ Cloudflare 사이트를 띄우는 원격 웹뷰가 아니므로 설치 후 인�
 
 ## 설치와 기록 이전
 
-1. `artifacts/reading-calendar-0.1.0-debug.apk`를 휴대폰에서 열고 설치한다. 요청될 때 해당 다운로드 앱의 설치 허용을 켠다.
+1. `artifacts/reading-calendar-0.1.1-debug.apk`를 휴대폰에서 열고 설치한다. 기존 0.1.0 앱은 삭제하지 않고 업데이트한다. 요청될 때 해당 다운로드 앱의 설치 허용을 켠다.
 2. 앱의 설정 → 독서 정보 관리 → 가져오기에서 웹에서 저장한 JSON 백업을 선택한다.
 3. 책·기록·화면 모드·쉬는 날이 맞는지 확인한다. 앱과 웹의 기록은 자동 동기화되지 않는다.
 
@@ -42,6 +42,8 @@ Windows에서는 `npm run android:sync` 후 Android Studio로 `android` 폴더�
 앱 ID `com.kimdomi.readingcalendar`와 WebView의 `https://localhost` 원본을 유지해야 기존 앱 저장소를 이어 쓸 수 있다.
 
 ## 검증과 다음 단계
+
+0.1.1은 초기 본문이 비어 있던 문제를 수정한다. 번들 없는 Android 주입 브리지는 `Capacitor.Plugins`를 제공하며 JS 코어의 `registerPlugin`을 제공하지 않는다. 이 실제 형태로 전체 모듈 시작 테스트를 실행해 재발을 방지한다.
 
 `npm run check`는 웹 일정·백업 회귀 검사와 네이티브 연결의 웹 폴백·파일 저장 취소·화면 잠금 해제·뒤로 가기·복귀·테마 검사를 실행한다.
 `cd android && ./gradlew connectedDebugAndroidTest`는 연결된 Android 기기/에뮬레이터에서 앱 ID·로컬 엔트리·플러그인 등록을 확인한다.
