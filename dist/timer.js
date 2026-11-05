@@ -1,0 +1,96 @@
+const storageKey = 'reading-calendar-timer-v1';
+let timer = {status:'idle', minutes:25, remaining:1500000, endsAt:null};
+try {
+  const saved = JSON.parse(localStorage.getItem(storageKey));
+  if (saved && ['idle','running','paused','complete'].includes(saved.status) && Number.isInteger(saved.minutes) && saved.minutes >= 1 && saved.minutes <= 60 && Number.isFinite(saved.remaining) && saved.remaining >= 0 && saved.remaining <= 3600000 && (saved.status !== 'running' || Number.isFinite(saved.endsAt))) timer = saved;
+} catch {}
+export function remainingTime(state, now = Date.now()) {
+  return Math.max(0, Math.min(state.minutes * 60000, state.status === 'running' ? state.endsAt - now : state.remaining));
+}
+let saveFailed = false;
+function save() {try {localStorage.setItem(storageKey, JSON.stringify(timer));saveFailed=false;} catch {saveFailed=true;}}
+function finishIfNeeded() {
+  if (timer.status === 'running' && remainingTime(timer) === 0) {timer.status='complete';timer.remaining=0;timer.endsAt=null;save();}
+}
+export function timerHTML() {
+  finishIfNeeded();
+  return `<section class="reading-timer" aria-label="독서 타이머">
+    <p class="timer-caption">시간을 내려놓고, 책 속으로.</p>
+    <div class="timer-clock">
+      <div class="timer-sector" aria-hidden="true"></div>
+      <div class="timer-ticks" aria-hidden="true">${Array.from({length:60},(_,i)=>`<i class="${i%5===0?'major':''}" style="--tick:${i*6}deg"></i>`).join('')}</div>
+      <div class="timer-numbers" aria-hidden="true">${Array.from({length:12},(_,i)=>{const a=i*Math.PI/6;return `<span style="left:${50+39*Math.sin(a)}%;top:${50-39*Math.cos(a)}%">${i*5}</span>`}).join('')}</div>
+      <button class="timer-center" type="button" aria-label="타이머 시작"></button>
+    </div>
+    <p class="timer-status" role="status" aria-live="polite"></p>
+    <div class="timer-setup"><label class="timer-duration">독서 시간 <span><input name="timerMinutes" aria-label="독서 시간 (분)" type="number" min="1" max="60" step="1" inputmode="numeric" value="${timer.minutes}">분</span></label>
+      <input class="timer-slider" aria-label="독서 시간 슬라이더 (분)" type="range" min="1" max="60" step="1" value="${timer.minutes}">
+      <div class="timer-presets">${[15,25,45,60].map(n=>`<button type="button" data-minutes="${n}">${n}분</button>`).join('')}</div>
+      <p class="small timer-hint">중앙 버튼을 누르면 숫자가 숨겨지고 독서가 시작돼요.</p>
+    </div>
+    <button type="button" class="secondary timer-reset">시간 다시 설정</button>
+    <p class="small timer-lock" aria-live="polite"></p>
+    <p class="error timer-storage" role="status"></p>
+  </section>`;
+}
+const play = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5v14l11-7z" fill="currentColor"/></svg>';
+const pause = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h4v14H7zm6 0h4v14h-4z" fill="currentColor"/></svg>';
+export function mountTimer(root) {
+  const panel = root.querySelector('.reading-timer'), center=panel.querySelector('.timer-center'), number=panel.querySelector('[name=timerMinutes]'), slider=panel.querySelector('.timer-slider');
+  let disposed=false, lock=null, attempted=false, lockEpoch=0;
+  const lockStatus=panel.querySelector('.timer-lock');
+  async function updateLock() {
+    if (timer.status !== 'running' || document.hidden || disposed) {
+      lockEpoch++;
+      attempted=false;
+      if(lock){const current=lock;lock=null;await current.release().catch(()=>{});}
+      lockStatus.textContent='';return;
+    }
+    if (attempted) return;
+    attempted=true;
+    const epoch=++lockEpoch;
+    if (!navigator.wakeLock) {lockStatus.textContent='이 브라우저에서는 화면 켜짐 유지가 지원되지 않아요.';return;}
+    try {
+      const granted=await navigator.wakeLock.request('screen');
+      if(disposed||timer.status!=='running'||document.hidden||epoch!==lockEpoch){await granted.release();return;}
+      lock=granted;lockStatus.textContent='화면 켜짐 유지 중';
+      granted.addEventListener('release',()=>{if(lock===granted){lock=null;lockStatus.textContent='화면 켜짐 유지가 해제됐어요.';}});
+    } catch {if(!disposed)lockStatus.textContent='화면 켜짐을 유지할 수 없어요. 절전 설정을 확인해 주세요.';}
+  }
+  function draw() {
+    finishIfNeeded();
+    const started=timer.status!=='idle', running=timer.status==='running';
+    panel.classList.toggle('timer-started',started);
+    panel.classList.toggle('timer-running',running);
+    panel.querySelector('.timer-sector').style.setProperty('--angle',(remainingTime(timer)/3600000*360)+'deg');
+    panel.querySelector('.timer-setup').hidden=started;
+    panel.querySelector('.timer-reset').hidden=!started;
+    const label=running?'타이머 일시정지':timer.status==='paused'?'타이머 재개':timer.status==='complete'?'시간 다시 설정':'타이머 시작';
+    center.setAttribute('aria-label',label);
+    center.innerHTML=running?pause:play;
+    const status=running?'지금은 독서에만 집중하세요.':timer.status==='paused'?'잠시 쉬어가고 있어요.':timer.status==='complete'?'독서 시간이 끝났어요.':'나만의 독서 시간을 정해 보세요.';
+    const statusEl=panel.querySelector('.timer-status');if(statusEl.textContent!==status)statusEl.textContent=status;
+    panel.querySelectorAll('[data-minutes]').forEach(el=>el.setAttribute('aria-pressed',String(Number(el.dataset.minutes)===timer.minutes)));
+    panel.querySelector('.timer-storage').textContent=saveFailed?'타이머 상태를 저장하지 못했어요. 새로고침하면 시간이 복원되지 않을 수 있어요.':'';
+    updateLock();
+  }
+  function setMinutes(value) {
+    if(timer.status!=='idle'||!Number.isInteger(value)||value<1||value>60)return;
+    timer.minutes=value;timer.remaining=value*60000;number.value=value;slider.value=value;save();draw();
+  }
+  number.oninput=()=>{const valid=number.value!==''&&number.validity.valid;center.disabled=!valid;if(valid)setMinutes(Number(number.value));};
+  number.onblur=()=>{number.value=timer.minutes;center.disabled=false;};
+  slider.oninput=()=>{center.disabled=false;setMinutes(Number(slider.value));};
+  panel.querySelectorAll('[data-minutes]').forEach(el=>el.onclick=()=>{center.disabled=false;setMinutes(Number(el.dataset.minutes));});
+  function reset() {timer.status='idle';timer.remaining=timer.minutes*60000;timer.endsAt=null;number.value=timer.minutes;slider.value=timer.minutes;save();draw();}
+  panel.querySelector('.timer-reset').onclick=reset;
+  center.onclick=()=>{
+    finishIfNeeded();
+    if(timer.status==='complete'){reset();return;}
+    if(timer.status==='running'){timer.remaining=remainingTime(timer);timer.status='paused';timer.endsAt=null;}
+    else {timer.endsAt=Date.now()+timer.remaining;timer.status='running';}
+    save();draw();
+  };
+  draw();const interval=setInterval(draw,1000);
+  return ()=>{disposed=true;clearInterval(interval);updateLock();};
+}

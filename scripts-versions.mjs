@@ -8,8 +8,9 @@ let backup=readFileSync('dist/backup.js','utf8').replace(/from '\.\/engine\.js(?
 const backupVersion=digest('backup.js');
 const settingsVersion=digest('settings.js'),paletteVersion=digest('palette.js');
 const colorPickerVersion=digest('color-picker.js');
-const holidaysVersion=digest('holidays.js');
+const holidaysVersion=digest('holidays.js'),timerVersion=digest('timer.js');
 let app=readFileSync('dist/app.js','utf8').replace(/from '\.\/engine\.js(?:\?[^']*)?'/,"from './engine.js?v="+engineVersion+"'").replace(/from '\.\/backup\.js(?:\?[^']*)?'/,"from './backup.js?v="+backupVersion+"'");writeFileSync('dist/app.js',app);
 app=app.replace(/from '\.\/settings\.js(?:\?[^']*)?'/,"from './settings.js?v="+settingsVersion+"'").replace(/from '\.\/palette\.js(?:\?[^']*)?'/,"from './palette.js?v="+paletteVersion+"'").replace(/from '\.\/color-picker\.js(?:\?[^']*)?'/,"from './color-picker.js?v="+colorPickerVersion+"'");writeFileSync('dist/app.js',app);
+app=app.replace(/from '\.\/timer\.js(?:\?[^']*)?'/,"from './timer.js?v="+timerVersion+"'");
 app=app.replace(/from '\.\/holidays\.js(?:\?[^']*)?'/,"from './holidays.js?v="+holidaysVersion+"'");writeFileSync('dist/app.js',app);
 let html=readFileSync('dist/index.html','utf8').replace(/src="app\.js(?:\?[^\"]*)?"/,'src="app.js?v='+digest('app.js')+'"').replace(/href="style\.css(?:\?[^\"]*)?"/,'href="style.css?v='+digest('style.css')+'"');writeFileSync('dist/index.html',html);
