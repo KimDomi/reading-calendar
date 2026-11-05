@@ -7,7 +7,7 @@ import {timerHTML,mountTimer,timerIsRunning} from './timer.js?v=2b47c928c261';
 import {holidays} from './holidays.js?v=e4f0f7db7f96';
 import {mountColorPicker} from './color-picker.js?v=868d08b6d8c5';
 import {bookPalette} from './palette.js?v=f34764add534';
-import {settings,settingsHTML,updateSetting,adoptSettings,rememberSettingsSections} from './settings.js?v=ad60f9dcab14';
+import {settings,settingsHTML,updateSetting,adoptSettings,rememberSettingsSections} from './settings.js?v=20b9e214e113';
 import {makeBackup,parseBackup,mergeBackup,validateData,writeImport} from './backup.js?v=f0e66f006d7a';
 import {add,days,recalc,record,recordMany,graph,recommendation,moveBook,isDaily,deadlineMisses} from './engine.js?v=cab576a36d57';
 const today=()=>{let d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`},$=s=>document.querySelector(s),esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),short=d=>`${Number(d.slice(5,7))}/${Number(d.slice(8))}`;

@@ -13,6 +13,7 @@ const system = typeof matchMedia === 'function' ? matchMedia('(prefers-color-sch
 export function applyTheme() {
   if (!document.documentElement) return;
   document.documentElement.dataset.theme = settings.theme === 'system' ? (system?.matches ? 'dark' : 'light') : settings.theme;
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content',document.documentElement.dataset.theme==='dark'?'#1c1c1e':'#fafafa');
   syncSystemBars(document.documentElement.dataset.theme);
 }
 system?.addEventListener('change', applyTheme);
