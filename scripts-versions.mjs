@@ -2,7 +2,13 @@
 import './scripts-holidays.mjs';
 import {readFileSync,writeFileSync} from 'node:fs';
 import {createHash} from 'node:crypto';
+import {icon} from './dist/icons.js';
 const digest=name=>createHash('sha256').update(readFileSync('dist/'+name)).digest('hex').slice(0,12);
+const iconsVersion=digest('icons.js');
+for(const name of ['app.js','settings.js','timer.js','date-picker.js','time-picker.js']){
+  const source=readFileSync('dist/'+name,'utf8').replace(/from '\.\/icons\.js(?:\?[^']*)?'/,"from './icons.js?v="+iconsVersion+"'");
+  writeFileSync('dist/'+name,source);
+}
 const nativeVersion=digest('native.js');
 for(const name of ['app.js','settings.js','timer.js']){
   const source=readFileSync('dist/'+name,'utf8').replace(/from '\.\/native\.js(?:\?[^']*)?'/,"from './native.js?v="+nativeVersion+"'");
@@ -33,4 +39,6 @@ app=app.replace(/from '\.\/time-picker\.js(?:\?[^']*)?'/,"from './time-picker.js
 app=app.replace(/from '\.\/date-picker\.js(?:\?[^']*)?'/,"from './date-picker.js?v="+datePickerVersion+"'");
 app=app.replace(/from '\.\/timer\.js(?:\?[^']*)?'/,"from './timer.js?v="+timerVersion+"'");
 app=app.replace(/from '\.\/holidays\.js(?:\?[^']*)?'/,"from './holidays.js?v="+holidaysVersion+"'");writeFileSync('dist/app.js',app);
-let html=readFileSync('dist/index.html','utf8').replace(/src="app\.js(?:\?[^\"]*)?"/,'src="app.js?v='+digest('app.js')+'"').replace(/href="style\.css(?:\?[^\"]*)?"/,'href="style.css?v='+digest('style.css')+'"');writeFileSync('dist/index.html',html);
+let html=readFileSync('dist/index.html','utf8').replace(/src="app\.js(?:\?[^\"]*)?"/,'src="app.js?v='+digest('app.js')+'"').replace(/href="style\.css(?:\?[^\"]*)?"/,'href="style.css?v='+digest('style.css')+'"');
+html=html.replace(/<svg\b[^>]*data-icon="([\w-]+)"[^>]*>[\s\S]*?<\/svg>/g,(_,name)=>icon(name));
+writeFileSync('dist/index.html',html);

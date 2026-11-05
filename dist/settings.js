@@ -1,3 +1,4 @@
+import {icon} from './icons.js?v=8fc4a110ec6b';
 import {normalizeRestDays} from './rest-days.js?v=270c12ac63f1';
 import {syncSystemBars,isNativeApp} from './native.js?v=bcb0856dfeee';
 const key = 'reading-calendar-settings-v1';
@@ -35,7 +36,7 @@ export function rememberSettingsSections(root){const sections=[...root.querySele
 export function settingsHTML(restDays = {}) {
   const rest=normalizeRestDays(restDays),weekdayNames=['일','월','화','수','목','금','토'];
   return `<details class="settings-card settings-section appearance-card" data-settings-section="appearance" ${openSections.has('appearance')?'open':''}><summary>화면 모드</summary><div class="settings-content">
-  <fieldset class="theme-options"><legend class="sr-only">화면 모드 선택</legend>${[['light','☀','라이트'],['dark','☾','다크'],['system','◐','시스템 설정']].map(([value,icon,label])=>`<label class="theme-option"><input type="radio" name="theme" value="${value}" ${settings.theme===value?'checked':''}><span class="theme-symbol" aria-hidden="true">${icon}</span><span>${label}</span></label>`).join('')}</fieldset>
+  <fieldset class="theme-options"><legend class="sr-only">화면 모드 선택</legend>${[['light','라이트'],['dark','다크'],['system','시스템 설정']].map(([value,label])=>`<label class="theme-option"><input type="radio" name="theme" value="${value}" ${settings.theme===value?'checked':''}><span class="theme-symbol" aria-hidden="true">${icon(value)}</span><span>${label}</span></label>`).join('')}</fieldset>
   </div></details>
   <details class="settings-card settings-section" data-settings-section="notifications" ${openSections.has('notifications')?'open':''}><summary>독서 알림</summary><div class="settings-content"><div class="row"><div><span id="notification-label" class="setting-label">알림 켜기</span><p class="small" id="notification-description">알림 기능을 준비하고 있어요.</p></div><button type="button" class="setting-switch" role="switch" aria-checked="${settings.notifications}" aria-labelledby="notification-label" aria-describedby="notification-description" data-setting="notifications"><span class="switch-thumb"></span><span class="sr-only">${settings.notifications?'켜짐':'꺼짐'}</span></button></div><label class="field">알림 시간<input type="time" name="notificationTime" value="${settings.notificationTime}" ${settings.notifications?'':'disabled'}></label><div class="note">켜기·끄기와 시간만 미리 저장해요. 정한 시간까지 독서 기록이 없으면 알려주는 기능은 ${isNativeApp()?'후속 버전':'앱 버전'}에서 제공할 예정이에요. 현재 알림은 발송되지 않아요.</div></div></details>
   <details class="settings-card settings-section rest-card" data-settings-section="rest" ${openSections.has('rest')?'open':''}><summary>독서 쉬는 날</summary><div class="settings-content">
@@ -44,5 +45,5 @@ export function settingsHTML(restDays = {}) {
     <form id="rest-date-form"><label class="field">날짜별 예외<input type="date" name="restDate" required aria-label="예외 날짜"></label><div class="rest-date-controls"><fieldset class="rest-mode"><legend class="sr-only">예외 유형</legend><label><input type="radio" name="restMode" value="rest" checked><span>이날은 쉬기</span></label><label><input type="radio" name="restMode" value="read"><span>이날은 읽기</span></label></fieldset><button type="submit" class="secondary">추가</button></div></form>
     <ul class="rest-date-list">${Object.entries(rest.dates).sort(([a],[b])=>a.localeCompare(b)).map(([date,mode])=>`<li><span>${date} · ${mode==='rest'?'쉬는 날':'읽는 날'}</span><button type="button" data-rest-remove="${date}" aria-label="${date} 예외 삭제">삭제</button></li>`).join('')}</ul>
   </div></details>
-  <section class="settings-card data-card"><div class="settings-title"><h2>독서 정보 관리</h2><button type="button" class="info-help" data-action="storagehelp" aria-label="독서 정보 저장 안내">?</button></div><button type="button" class="secondary wide add" data-action="backup">독서 정보 내보내기 / 가져오기</button></section>`;
+  <section class="settings-card data-card"><div class="settings-title"><h2>독서 정보 관리</h2><button type="button" class="info-help" data-action="storagehelp" aria-label="독서 정보 저장 안내">${icon('help')}</button></div><button type="button" class="secondary wide add" data-action="backup">독서 정보 내보내기 / 가져오기</button></section>`;
 }

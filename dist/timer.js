@@ -1,5 +1,6 @@
+import {icon} from './icons.js?v=8fc4a110ec6b';
 import {screenLockAvailable,requestScreenLock} from './native.js?v=bcb0856dfeee';
-import {settings,updateSetting,DEFAULT_TIMER_COLOR} from './settings.js?v=d18ca87e4103';
+import {settings,updateSetting,DEFAULT_TIMER_COLOR} from './settings.js?v=0b00e4a990e8';
 import {openTimerColorPicker,closeTimerColorPicker} from './timer-color-picker.js?v=a8487b6ddbf4';
 export {closeTimerColorPicker};
 const storageKey = 'reading-calendar-timer-v1';
@@ -44,8 +45,7 @@ export function timerHTML() {
     <p class="error timer-storage" role="status"></p>
   </section>`;
 }
-const play = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5v14l11-7z" fill="currentColor"/></svg>';
-const pause = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h4v14H7zm6 0h4v14h-4z" fill="currentColor"/></svg>';
+const play=icon('play'),pause=icon('pause');
 export function mountTimer(root,getEstimatedMinutes=()=>0) {
   const panel = root.querySelector('.reading-timer'), center=panel.querySelector('.timer-center'), number=panel.querySelector('[name=timerMinutes]'), slider=panel.querySelector('.timer-slider');
   const colorTrigger=panel.querySelector('.timer-color-trigger');

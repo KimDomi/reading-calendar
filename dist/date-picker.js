@@ -1,3 +1,4 @@
+import {icon} from './icons.js?v=8fc4a110ec6b';
 import {holidays} from './holidays.js?v=e4f0f7db7f96';
 const pad=n=>String(n).padStart(2,'0');
 const dateOf=(y,m,d)=>`${String(y).padStart(4,'0')}-${pad(m)}-${pad(d)}`;
@@ -11,10 +12,10 @@ export function mountDatePickers(root) {
     input.dataset.customDate='true';input.hidden=true;
     const button=document.createElement('button');button.type='button';button.className='date-trigger';button.setAttribute('aria-haspopup','dialog');
     const fieldName=input.getAttribute('aria-label')||input.closest('label')?.textContent.trim()||'날짜';
-    const sync=()=>{button.textContent=input.value?label(input.value):'날짜 선택';button.disabled=input.disabled;button.setAttribute('aria-label',`${fieldName}: ${button.textContent}`);};
+    const sync=()=>{button.innerHTML=`<span>${input.value?label(input.value):'날짜 선택'}</span>${icon('calendar')}`;button.disabled=input.disabled;button.setAttribute('aria-label',`${fieldName}: ${button.textContent}`);};
     input.after(button);sync();input.addEventListener('input',sync);input.addEventListener('change',sync);
     input.addEventListener('click',e=>e.preventDefault());
-    input.addEventListener('invalid',e=>{e.preventDefault();button.focus();button.setAttribute('aria-invalid','true');button.textContent='날짜를 선택해 주세요';});
+    input.addEventListener('invalid',e=>{e.preventDefault();button.focus();button.setAttribute('aria-invalid','true');button.innerHTML='<span>날짜를 선택해 주세요</span>'+icon('calendar');});
     button.onclick=e=>{e.preventDefault();e.stopPropagation();openDatePicker(input,button,fieldName,()=>{button.removeAttribute('aria-invalid');sync();});};
   }
 }
@@ -41,7 +42,7 @@ function openDatePicker(input,trigger,title,onApply) {
       const first=Math.floor((year-1)/12)*12+1;
       content=`<div class="dp-options">${Array.from({length:12},(_,i)=>`<button type="button" data-picker-year="${first+i}" ${withinYear(first+i)?'':'disabled'}>${first+i}년</button>`).join('')}</div>`;
     }
-    dialog.innerHTML=`<h2 tabindex="-1" autofocus></h2><div class="dp-toolbar"><button type="button" data-dp="prev" aria-label="이전 ${mode==='days'?'달':mode==='months'?'해':'연도 목록'}">‹</button><button type="button" data-dp="heading" aria-label="${mode==='days'?'월 선택':mode==='months'?'연도 선택':'날짜 선택으로 돌아가기'}">${mode==='days'?`${year}년 ${month}월`:mode==='months'?`${year}년`:`${Math.floor((year-1)/12)*12+1}–${Math.floor((year-1)/12)*12+12}년`}</button><button type="button" data-dp="next" aria-label="다음 ${mode==='days'?'달':mode==='months'?'해':'연도 목록'}">›</button></div>${content}<div class="dp-selection" aria-live="polite">${label(selected)}</div><div class="dp-footer"><button type="button" data-dp="today" class="secondary" ${dateAllowed(today,min,max)?'':'disabled'}>오늘</button><button type="button" data-dp="cancel" class="secondary">취소</button><button type="button" data-dp="apply" class="primary">선택</button></div>`;
+    dialog.innerHTML=`<h2 tabindex="-1" autofocus></h2><div class="dp-toolbar"><button type="button" data-dp="prev" aria-label="이전 ${mode==='days'?'달':mode==='months'?'해':'연도 목록'}">${icon('chevron-left')}</button><button type="button" data-dp="heading" aria-label="${mode==='days'?'월 선택':mode==='months'?'연도 선택':'날짜 선택으로 돌아가기'}">${mode==='days'?`${year}년 ${month}월`:mode==='months'?`${year}년`:`${Math.floor((year-1)/12)*12+1}–${Math.floor((year-1)/12)*12+12}년`}</button><button type="button" data-dp="next" aria-label="다음 ${mode==='days'?'달':mode==='months'?'해':'연도 목록'}">${icon('chevron-right')}</button></div>${content}<div class="dp-selection" aria-live="polite">${label(selected)}</div><div class="dp-footer"><button type="button" data-dp="today" class="secondary" ${dateAllowed(today,min,max)?'':'disabled'}>오늘</button><button type="button" data-dp="cancel" class="secondary">취소</button><button type="button" data-dp="apply" class="primary">선택</button></div>`;
     dialog.querySelector('h2').textContent=title;
     const index=year*12+month-1;
     const minIndex=Number(min.slice(0,4))*12+Number(min.slice(5,7))-1,maxIndex=Number(max.slice(0,4))*12+Number(max.slice(5,7))-1;

@@ -1,15 +1,15 @@
+import {icon} from './icons.js?v=8fc4a110ec6b';
 const pad=n=>String(n).padStart(2,'0');
 export const timeLabel=value=>{const [h,m]=value.split(':').map(Number);return `${h<12?'오전':'오후'} ${h%12||12}:${pad(m)}`;};
 export function dialValue(x,y,minutes=false){const angle=(Math.atan2(x,-y)*180/Math.PI+360)%360;return Math.round(angle/(minutes?6:30))%(minutes?60:12);}
 let dismiss=null;
 export function closeTimePicker(){dismiss?.();}
-const keyboardIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M5 9h2m2 0h2m2 0h2m2 0h2M5 12h2m2 0h2m2 0h2m2 0h2M7 16h10"/></svg>';
-const clockIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 2"/></svg>';
+const keyboardIcon=icon('keyboard'),clockIcon=icon('timer');
 export function mountTimePickers(root){
   for(const input of root.querySelectorAll('input[type=time]:not([data-custom-time])')){
     input.dataset.customTime='true';input.hidden=true;
     const trigger=document.createElement('button');trigger.type='button';trigger.className='time-trigger';trigger.setAttribute('aria-haspopup','dialog');
-    const sync=()=>{trigger.textContent=timeLabel(input.value||'21:00');trigger.disabled=input.disabled;trigger.setAttribute('aria-label','알림 시간 '+trigger.textContent);};
+    const sync=()=>{trigger.innerHTML=`<span>${timeLabel(input.value||'21:00')}</span>${icon('timer')}`;trigger.disabled=input.disabled;trigger.setAttribute('aria-label','알림 시간 '+trigger.textContent);};
     input.after(trigger);sync();input.addEventListener('change',sync);input.addEventListener('click',e=>e.preventDefault());
     trigger.onclick=e=>{
       e.preventDefault();e.stopPropagation();closeTimePicker();
