@@ -7,6 +7,7 @@ try {
 export function remainingTime(state, now = Date.now()) {
   return Math.max(0, Math.min(state.minutes * 60000, state.status === 'running' ? state.endsAt - now : state.remaining));
 }
+export function timerIsRunning(){return timer.status==='running'&&remainingTime(timer)>0;}
 export function sectorPath(fraction) {
   if (fraction <= 0) return '';
   if (fraction >= 1) return 'M50 0 A50 50 0 1 1 50 100 A50 50 0 1 1 50 0 Z';

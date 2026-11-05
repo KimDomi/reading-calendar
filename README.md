@@ -15,6 +15,10 @@ npm run check
 
 The product direction and release gates are tracked in [`ROADMAP.md`](ROADMAP.md).
 
+## Unconfirmed progress
+
+Registration alone does not confirm progress. Older registration-only confirmations are distinguished from actual records, including explicit zero-page records. Pending past allocations are checked on startup, local midnight, foreground return and calendar navigation. Automatic prompts are limited to once per local date on this device; the calendar's manual confirmation button remains available. Open dialogs, input and a running timer defer automatic prompts. The confirmation still records progress on the day it is submitted rather than assigning it to historical dates.
+
 ## Reading rest days
 
 Settings support weekly rest days, optional Korean public holidays, and dated overrides (`rest` / `read`). Date overrides take priority. These scheduling preferences are stored with reading data and included in JSON backups; merging keeps the current preferences. Changing them recalculates allocations from today and preserves earlier allocations and all records. At least one weekly reading day must remain available. Deadline plans without any available reading days show a warning instead of receiving allocations.
