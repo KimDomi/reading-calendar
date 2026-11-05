@@ -19,6 +19,11 @@ let backup=readFileSync('dist/backup.js','utf8').replace(/from '\.\/engine\.js(?
 const backupVersion=digest('backup.js');
 const settingsVersion=digest('settings.js'),paletteVersion=digest('palette.js');
 const colorPickerVersion=digest('color-picker.js');
+const timerColorPicker=readFileSync('dist/timer-color-picker.js','utf8').replace(/from '\.\/color-picker\.js(?:\?[^']*)?'/,"from './color-picker.js?v="+colorPickerVersion+"'");
+writeFileSync('dist/timer-color-picker.js',timerColorPicker);
+const timerColorVersion=digest('timer-color-picker.js');
+const timer=readFileSync('dist/timer.js','utf8').replace(/from '\.\/settings\.js(?:\?[^']*)?'/,"from './settings.js?v="+settingsVersion+"'").replace(/from '\.\/timer-color-picker\.js(?:\?[^']*)?'/,"from './timer-color-picker.js?v="+timerColorVersion+"'");
+writeFileSync('dist/timer.js',timer);
 const timerVersion=digest('timer.js');
 const progressCheckVersion=digest('progress-check.js');
 let app=readFileSync('dist/app.js','utf8').replace(/from '\.\/engine\.js(?:\?[^']*)?'/,"from './engine.js?v="+engineVersion+"'").replace(/from '\.\/backup\.js(?:\?[^']*)?'/,"from './backup.js?v="+backupVersion+"'");writeFileSync('dist/app.js',app);

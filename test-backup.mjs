@@ -11,6 +11,10 @@ assert.deepEqual(parseBackup(JSON.stringify(makeBackup({books:[],records:[],allo
 console.log('PASS: backup roundtrip, status/settings preservation, deduplication, no input mutation, sequence append, history retention, malformed file rejection');
 const preferences={theme:'dark',notifications:true,notificationTime:'20:30'};
 assert.deepEqual(parseBackup(JSON.stringify(makeBackup(state,undefined,preferences))).settings,preferences);
+const coloredPreferences={...preferences,timerColor:'#859dc1'};
+assert.deepEqual(parseBackup(JSON.stringify(makeBackup(state,undefined,coloredPreferences))).settings,coloredPreferences);
+assert.throws(()=>makeBackup(state,undefined,{...preferences,timerColor:'red;position:fixed'}));
+assert.throws(()=>makeBackup(state,undefined,{...preferences,timerColor:['#859dc1']}));
 assert.equal(parseBackup(text).settings,undefined);
 for(const settings of [{...preferences,theme:'blue'},{...preferences,notifications:'yes'},{...preferences,notificationTime:'25:00'}])assert.throws(()=>parseBackup(JSON.stringify({...JSON.parse(text),settings})));
 const entries=new Map([['reading-calendar-v1','original'],['reading-calendar-settings-v1','old-settings']]);

@@ -6,7 +6,8 @@ const fail=()=>{throw Error('독서 백업 파일의 형식이나 데이터가 �
 const idOK=x=>typeof x==='string'&&/^[a-zA-Z0-9_-]{1,128}$/.test(x);
 export function validateSettings(value){
  if(!value||typeof value!=='object'||!['system','light','dark'].includes(value.theme)||typeof value.notifications!=='boolean'||typeof value.notificationTime!=='string'||!/^([01]\d|2[0-3]):[0-5]\d$/.test(value.notificationTime))fail();
- return {theme:value.theme,notifications:value.notifications,notificationTime:value.notificationTime};
+ if(value.timerColor!==undefined&&(typeof value.timerColor!=='string'||!/^#[0-9a-f]{6}$/i.test(value.timerColor)))fail();
+ return {theme:value.theme,notifications:value.notifications,notificationTime:value.notificationTime,...(value.timerColor===undefined?{}:{timerColor:value.timerColor})};
 }
 export function validateData(data){
  if(!data||!Array.isArray(data.books)||!Array.isArray(data.records)||!Array.isArray(data.alloc)||data.books.length>10000||data.records.length>200000||data.alloc.length>200000)fail();

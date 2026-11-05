@@ -1,17 +1,19 @@
 import {normalizeRestDays} from './rest-days.js?v=270c12ac63f1';
 import {syncSystemBars,isNativeApp} from './native.js?v=bcb0856dfeee';
 const key = 'reading-calendar-settings-v1';
-export const settings = {theme: 'system', notifications: false, notificationTime: '21:00'};
+export const DEFAULT_TIMER_COLOR='#7d9b8a';
+export const settings = {theme: 'system', notifications: false, notificationTime: '21:00',timerColor:DEFAULT_TIMER_COLOR};
 const validTime = value => typeof value === 'string' && /^([01]\d|2[0-3]):[0-5]\d$/.test(value);
 try {
   const saved = JSON.parse(localStorage.getItem(key));
   if (saved && ['system', 'light', 'dark'].includes(saved.theme)) settings.theme = saved.theme;
   if (typeof saved?.notifications === 'boolean') settings.notifications = saved.notifications;
   if (validTime(saved?.notificationTime)) settings.notificationTime = saved.notificationTime;
+  if (typeof saved?.timerColor==='string'&&/^#[0-9a-f]{6}$/i.test(saved.timerColor)) settings.timerColor=saved.timerColor;
 } catch {}
 const system = typeof matchMedia === 'function' ? matchMedia('(prefers-color-scheme: dark)') : null;
 export function applyTheme() {
-  if (!document.documentElement) return;
+  if (!globalThis.document?.documentElement) return;
   document.documentElement.dataset.theme = settings.theme === 'system' ? (system?.matches ? 'dark' : 'light') : settings.theme;
   document.querySelector('meta[name="theme-color"]')?.setAttribute('content',document.documentElement.dataset.theme==='dark'?'#1c1c1e':'#fafafa');
   syncSystemBars(document.documentElement.dataset.theme);
@@ -22,6 +24,7 @@ export function updateSetting(name, value) {
   if (name === 'theme' && ['system', 'light', 'dark'].includes(value)) settings.theme = value;
   else if (name === 'notifications' && typeof value === 'boolean') settings.notifications = value;
   else if (name === 'notificationTime' && validTime(value)) settings.notificationTime = value;
+  else if (name === 'timerColor' && typeof value==='string'&&/^#[0-9a-f]{6}$/i.test(value)) settings.timerColor=value;
   else return;
   applyTheme();
   localStorage.setItem(key, JSON.stringify(settings));

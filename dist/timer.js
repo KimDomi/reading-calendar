@@ -1,4 +1,7 @@
 import {screenLockAvailable,requestScreenLock} from './native.js?v=bcb0856dfeee';
+import {settings,updateSetting,DEFAULT_TIMER_COLOR} from './settings.js?v=d18ca87e4103';
+import {openTimerColorPicker,closeTimerColorPicker} from './timer-color-picker.js?v=4b20481d2d65';
+export {closeTimerColorPicker};
 const storageKey = 'reading-calendar-timer-v1';
 let timer = {status:'idle', minutes:25, remaining:1500000, endsAt:null};
 try {
@@ -23,9 +26,10 @@ function finishIfNeeded() {
 }
 export function timerHTML() {
   finishIfNeeded();
-  return `<section class="reading-timer" aria-label="독서 타이머">
+  return `<section class="reading-timer" aria-label="독서 타이머" style="--timer-color:${settings.timerColor}">
     <div class="timer-clock">
       <svg class="timer-sector" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="50" class="timer-sector-base"/><path class="timer-wedge"/></svg>
+      <button class="timer-color-trigger" type="button" aria-label="타이머 색상 변경" aria-haspopup="dialog"></button>
       <div class="timer-ticks" aria-hidden="true">${Array.from({length:60},(_,i)=>`<i class="${i%5===0?'major':''}" style="--tick:${i*6}deg"></i>`).join('')}</div>
       <div class="timer-numbers" aria-hidden="true">${Array.from({length:4},(_,i)=>{const a=i*Math.PI/2;return `<span style="left:${50+39*Math.sin(a)}%;top:${50-39*Math.cos(a)}%">${i*timer.minutes/4}</span>`}).join('')}</div>
       <button class="timer-center" type="button" aria-label="타이머 시작"></button>
@@ -44,6 +48,12 @@ const play = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5v14l11-7z
 const pause = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h4v14H7zm6 0h4v14h-4z" fill="currentColor"/></svg>';
 export function mountTimer(root,getEstimatedMinutes=()=>0) {
   const panel = root.querySelector('.reading-timer'), center=panel.querySelector('.timer-center'), number=panel.querySelector('[name=timerMinutes]'), slider=panel.querySelector('.timer-slider');
+  const colorTrigger=panel.querySelector('.timer-color-trigger');
+  colorTrigger.onclick=()=>openTimerColorPicker({color:settings.timerColor,defaultColor:DEFAULT_TIMER_COLOR,trigger:colorTrigger,onApply:hex=>{
+    const previous=settings.timerColor;
+    try{updateSetting('timerColor',hex);}catch{settings.timerColor=previous;throw Error('색상을 저장하지 못했어요. 다시 시도해 주세요.');}
+    draw();
+  }});
   const alignClock = () => panel.style.setProperty('--timer-nav-height', (document.querySelector('nav')?.getBoundingClientRect().height || 84)+'px');
   alignClock();window.addEventListener('resize',alignClock);
   let disposed=false, lock=null, attempted=false, lockEpoch=0, animation=null, drawnKey='';
@@ -83,9 +93,10 @@ export function mountTimer(root,getEstimatedMinutes=()=>0) {
     updateLock();
     if(timer.status==='running'&&!document.hidden&&animation===null)animation=requestAnimationFrame(animate);
     else if((timer.status!=='running'||document.hidden)&&animation!==null){cancelAnimationFrame(animation);animation=null;}
-    const key=timer.status+':'+timer.minutes+':'+saveFailed;
+    const key=timer.status+':'+timer.minutes+':'+saveFailed+':'+settings.timerColor;
     if(key===drawnKey)return;
     drawnKey=key;
+    panel.style.setProperty('--timer-color',settings.timerColor);
     slider.style.setProperty('--slider-progress',((Number(slider.value)-Number(slider.min))/(Number(slider.max)-Number(slider.min))*100)+'%');
     const started=timer.status!=='idle', running=timer.status==='running';
     panel.classList.toggle('timer-started',started);
@@ -123,5 +134,5 @@ export function mountTimer(root,getEstimatedMinutes=()=>0) {
   };
   document.addEventListener('visibilitychange',draw);
   draw();const interval=setInterval(draw,1000);
-  return ()=>{disposed=true;clearInterval(interval);document.removeEventListener('visibilitychange',draw);window.removeEventListener('resize',alignClock);if(animation!==null)cancelAnimationFrame(animation);updateLock();};
+  return ()=>{disposed=true;closeTimerColorPicker();clearInterval(interval);document.removeEventListener('visibilitychange',draw);window.removeEventListener('resize',alignClock);if(animation!==null)cancelAnimationFrame(animation);updateLock();};
 }
