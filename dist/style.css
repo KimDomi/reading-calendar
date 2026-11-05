@@ -4,6 +4,8 @@
 
 [hidden]{display:none!important}
 
+.settings-title{display:flex;align-items:center;gap:4px}.info-help{width:44px;height:44px;display:grid;place-items:center;position:relative;font-size:14px;flex-shrink:0}.info-help::before{content:"";position:absolute;inset:10px;border:1px solid var(--line);border-radius:50%}
+
 .app:has(nav [data-tab="calendar"].active)>header{display:none}
 
 header .help{left:12px;right:auto}.header-new{display:none;position:absolute;right:12px;top:8px;padding:10px 12px;font-size:12px;min-height:40px}.app:has(nav [data-tab="plans"].active) .header-new{display:block}.app:has(nav [data-tab="plans"].active)>header{height:56px;padding-inline:96px}.plan-group:first-child h3{margin-top:4px}
