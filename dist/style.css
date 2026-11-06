@@ -25,7 +25,7 @@ html dialog.timer-color-picker{width:min(340px,calc(100% - 24px));padding:16px;m
 
 .grid .day{aspect-ratio:1 / 1.1;min-height:0;padding:5px;gap:2px;line-height:1.1;border-radius:9px;overflow:hidden}.grid .marks{gap:2px}.grid .marks i{height:2px;flex-shrink:0}.grid .rest-label{font-size:8px;line-height:1}.grid .marks small{font-size:8px;line-height:1}@media(max-width:350px){.grid .day{padding:4px;font-size:12px}}
 
-html .header-new{background:#e1e1e7;color:#202024;border:1px solid #c8c8d1;box-shadow:0 2px 5px #00000012}html .header-new:hover{background:#d7d7df}html .header-new:active{background:#cdcdd7;box-shadow:inset 0 1px 3px #00000014}
+html .header-new{background:var(--card);color:var(--text);border:1px solid var(--line);box-shadow:0 2px 5px #00000012}html .header-new:hover{background:var(--soft)}html .header-new:active{background:var(--soft);box-shadow:inset 0 1px 3px #00000014}
 
 :root{--drop-outline:#b9b9c2}:root[data-theme=dark]{--drop-outline:#62626c}html:root[data-theme] .plan-group.drop-target{outline:3px dashed var(--drop-outline);outline-offset:4px}
 
@@ -113,9 +113,9 @@ header .help{left:12px;right:auto}.header-new{display:none;position:absolute;rig
 html .primary,html .secondary{font-size:var(--control-font);min-height:44px;border-radius:var(--control-radius);line-height:1.5}
 html .primary{font-weight:650}
 html .secondary{background:var(--card);color:var(--text)}
-html .header-new{font-size:12px;min-height:40px;background:#e1e1e7;color:#202024}
-html .header-new:hover{background:#d7d7df}
-html .header-new:active{background:#cdcdd7}
+html .header-new{font-size:12px;min-height:40px;background:var(--card);color:var(--text)}
+html .header-new:hover{background:var(--soft)}
+html .header-new:active{background:var(--soft)}
 html dialog,html dialog.date-picker,html dialog.time-picker{padding:var(--dialog-padding)}
 html dialog h2{font-size:18px;line-height:1.5;margin-bottom:var(--form-gap)}
 html label.field,html .choice-field legend,html .book-colors legend,html .rest-weekdays legend{font-size:var(--label-font);line-height:1.5;color:var(--muted)}
