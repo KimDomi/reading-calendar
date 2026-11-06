@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import {remainingTime,sectorPath,formatRemainingTime} from './dist/timer.js';
+import {remainingTime,sectorPath,formatRemainingTime,formatDialTime} from './dist/timer.js';
 const running = {status:'running', minutes:25, endsAt:2000000, remaining:1500000};
 assert.equal(remainingTime(running, 500000), 1500000);
 assert.equal(remainingTime(running, 560000), 1440000);
@@ -25,3 +25,14 @@ assert.equal(formatRemainingTime(3600000),'1:00:00');
 assert.equal(formatRemainingTime(86400000),'24:00:00');
 assert.equal(formatRemainingTime(-1),'00:00');
 console.log('PASS numeric timer rounding, hour/day durations and zero boundary');
+
+assert.equal(formatDialTime(25),'25분');
+assert.equal(formatDialTime(25/4),'6분\n15초');
+assert.equal(formatDialTime(25/2),'12분\n30초');
+assert.equal(formatDialTime(1/4),'15초');
+assert.equal(formatDialTime(60),'1시간');
+assert.equal(formatDialTime(61),'1시간\n1분');
+assert.equal(formatDialTime(1440),'24시간');
+assert.equal(formatDialTime(1439*3/4),'17시간\n59분\n15초');
+assert.equal(formatDialTime(0),'0초');
+console.log('PASS readable quarter markers for minutes, fractional minutes and multi-hour sessions');

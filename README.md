@@ -34,7 +34,11 @@ Exports also include theme, notification toggle and notification time. The impor
   indexes on rendering; recalculate schedules only after explicit user actions.
 - `dist/engine.js`: pure allocation, recording, graph and ordering functions.
 - `dist/backup.js`: versioned JSON backup validation and non-destructive merging.
-- `dist/style.css` / `dist/index.html`: responsive layout and entry point.
+- `dist/style.css` / `dist/index.html`: responsive layout and entry point. Reuse
+  the shared spacing, touch-target, radius and dialog tokens when adding controls.
+  Text uses relative sizes; short screens with large text may scroll.
+- Settings changes and book graph expansion update only their affected controls;
+  preserve unrelated input values, focus and scroll when extending these handlers.
 
 The backup/import entry belongs in the Settings tab. Records and historical
 allocations must survive mode changes, reordering, pausing and schedule updates.
@@ -47,10 +51,7 @@ HTML references. This keeps browser caches from mixing incompatible versions.
 Then run:
 
 ```
-node --input-type=module --check < dist/app.js
-node --experimental-vm-modules test-startup.mjs
-node test.mjs
-node test-backup.mjs
+npm run check
 ```
 
 The startup test executes the complete module graph with a minimal document. It

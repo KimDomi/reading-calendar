@@ -23,18 +23,22 @@ export function applyTheme() {
 system?.addEventListener('change', applyTheme);
 applyTheme();
 export function updateSetting(name, value) {
-  if (name === 'theme' && ['system', 'light', 'dark'].includes(value)) settings.theme = value;
-  else if (name === 'notifications' && typeof value === 'boolean') settings.notifications = value;
-  else if (name === 'notificationTime' && validTime(value)) settings.notificationTime = value;
-  else if (name === 'timerColor' && typeof value==='string'&&/^#[0-9a-f]{6}$/i.test(value)) settings.timerColor=value;
-  else if (name === 'showTimerDigits' && typeof value==='boolean') settings.showTimerDigits=value;
-  else return;
-  applyTheme();
-  localStorage.setItem(key, JSON.stringify(settings));
+  const valid = name === 'theme' ? ['system','light','dark'].includes(value)
+    : name === 'notifications' || name === 'showTimerDigits' ? typeof value === 'boolean'
+    : name === 'notificationTime' ? validTime(value)
+    : name === 'timerColor' ? typeof value === 'string' && /^#[0-9a-f]{6}$/i.test(value) : false;
+  if (!valid || settings[name] === value) return;
+  // Persist first so a failed write cannot change the active preference or theme.
+  localStorage.setItem(key, JSON.stringify({...settings,[name]:value}));
+  settings[name] = value;
+  if (name === 'theme') applyTheme();
 }
 export function adoptSettings(value) {Object.assign(settings,value);applyTheme();}
 const openSections=new Set();
 export function rememberSettingsSections(root){const sections=[...root.querySelectorAll('[data-settings-section]')];if(!sections.length)return;openSections.clear();sections.filter(el=>el.open).forEach(el=>openSections.add(el.dataset.settingsSection));}
+export function restDatesHTML(restDays) {
+  return Object.entries(normalizeRestDays(restDays).dates).sort(([a],[b])=>a.localeCompare(b)).map(([date,mode])=>`<li><span>${date} · ${mode==='rest'?'쉬는 날':'읽는 날'}</span><button type="button" data-rest-remove="${date}" aria-label="${date} 예외 삭제">삭제</button></li>`).join('');
+}
 export function settingsHTML(restDays = {}) {
   const rest=normalizeRestDays(restDays),weekdayNames=['일','월','화','수','목','금','토'];
   const expander=`<span class="settings-expander" aria-hidden="true">${icon('chevron-down')}</span>`;
@@ -47,7 +51,7 @@ export function settingsHTML(restDays = {}) {
     <fieldset class="rest-weekdays"><legend>매주 쉬는 요일</legend><div>${[1,2,3,4,5,6,0].map(d=>`<button type="button" data-rest-weekday="${d}" aria-label="${weekdayNames[d]}요일 휴식" aria-pressed="${rest.weekdays.includes(d)}">${weekdayNames[d]}</button>`).join('')}</div></fieldset>
     <label class="rest-holidays"><input type="checkbox" name="restPublicHolidays" ${rest.publicHolidays?'checked':''}>공휴일에도 쉬기</label>
     <form id="rest-date-form"><label class="field">날짜별 예외<input type="date" name="restDate" required aria-label="예외 날짜"></label><div class="rest-date-controls"><fieldset class="rest-mode"><legend class="sr-only">예외 유형</legend><label><input type="radio" name="restMode" value="rest" checked><span>이날은 쉬기</span></label><label><input type="radio" name="restMode" value="read"><span>이날은 읽기</span></label></fieldset><button type="submit" class="secondary">추가</button></div></form>
-    <ul class="rest-date-list">${Object.entries(rest.dates).sort(([a],[b])=>a.localeCompare(b)).map(([date,mode])=>`<li><span>${date} · ${mode==='rest'?'쉬는 날':'읽는 날'}</span><button type="button" data-rest-remove="${date}" aria-label="${date} 예외 삭제">삭제</button></li>`).join('')}</ul>
+    <ul class="rest-date-list">${restDatesHTML(rest)}</ul>
   </div></details>
   <section class="settings-card data-card"><div class="settings-title"><h2>독서 정보 관리</h2><button type="button" class="info-help" data-action="storagehelp" aria-label="독서 정보 저장 안내">?</button></div><div class="settings-content"><button type="button" class="secondary wide add" data-action="backup">독서 정보 내보내기 / 가져오기</button></div></section>`;
 }

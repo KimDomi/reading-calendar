@@ -1,6 +1,6 @@
 import {icon} from './icons.js?v=8fc4a110ec6b';
 import {screenLockAvailable,requestScreenLock} from './native.js?v=bcb0856dfeee';
-import {settings,updateSetting,DEFAULT_TIMER_COLOR} from './settings.js?v=36968829603d';
+import {settings,updateSetting,DEFAULT_TIMER_COLOR} from './settings.js?v=9d143e491962';
 import {openTimerColorPicker,closeTimerColorPicker} from './timer-color-picker.js?v=a8487b6ddbf4';
 export {closeTimerColorPicker};
 const storageKey = 'reading-calendar-timer-v1';
@@ -15,6 +15,11 @@ export function remainingTime(state, now = Date.now()) {
 export function formatRemainingTime(milliseconds){
   const seconds=Math.ceil(Math.max(0,Number.isFinite(milliseconds)?milliseconds:0)/1000),hours=Math.floor(seconds/3600),minutes=Math.floor(seconds%3600/60),pad=value=>String(value).padStart(2,'0');
   return hours?`${hours}:${pad(minutes)}:${pad(seconds%60)}`:`${pad(minutes)}:${pad(seconds%60)}`;
+}
+// Quarter markers describe durations rather than decimal fractions of a minute.
+export function formatDialTime(minutes){
+  const total=Math.round(Math.max(0,Number.isFinite(minutes)?minutes:0)*60),hours=Math.floor(total/3600),mins=Math.floor(total%3600/60),seconds=total%60;
+  return [hours?hours+'시간':'',mins?mins+'분':'',seconds?seconds+'초':''].filter(Boolean).join('\n')||'0초';
 }
 export function timerIsRunning(){return timer.status==='running'&&remainingTime(timer)>0;}
 export function sectorPath(fraction) {
@@ -37,7 +42,7 @@ export function timerHTML() {
       <svg class="timer-sector" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="50" class="timer-sector-base"/><path class="timer-wedge"/></svg>
       <button class="timer-color-trigger" type="button" aria-label="타이머 색상 변경" aria-haspopup="dialog"></button>
       <div class="timer-ticks" aria-hidden="true">${Array.from({length:60},(_,i)=>`<i class="${i%5===0?'major':''}" style="--tick:${i*6}deg"></i>`).join('')}</div>
-      <div class="timer-numbers" aria-hidden="true">${Array.from({length:4},(_,i)=>{const a=i*Math.PI/2;return `<span style="left:${50+49*Math.sin(a)}%;top:${50-49*Math.cos(a)}%">${i*timer.minutes/4}</span>`}).join('')}</div>
+      <div class="timer-numbers" aria-hidden="true">${Array.from({length:4},(_,i)=>{const a=i*Math.PI/2;return `<span style="left:${50+48*Math.sin(a)}%;top:${50-48*Math.cos(a)}%">${formatDialTime((i||4)*timer.minutes/4)}</span>`}).join('')}</div>
       <button class="timer-center" type="button" aria-label="타이머 시작"></button>
     </div>
     <p class="timer-status sr-only" role="status" aria-live="polite"></p>
@@ -67,12 +72,18 @@ export function mountTimer(root,getEstimatedMinutes=()=>0) {
     draw();
   }});
   const alignClock = () => {
-    panel.style.setProperty('--timer-nav-height',(document.querySelector('nav')?.getBoundingClientRect().height||84)+'px');
-    panel.style.setProperty('--timer-content-top',Math.max(0,root.getBoundingClientRect().top+window.scrollY)+'px');
-    panel.style.setProperty('--timer-setup-height',(panel.querySelector('.timer-setup').getBoundingClientRect().height||166)+'px');
+    const navHeight=document.querySelector('nav')?.getBoundingClientRect().height||84,top=Math.max(0,root.getBoundingClientRect().top+window.scrollY),setupHeight=panel.querySelector('.timer-setup').getBoundingClientRect().height||166;
+    panel.style.setProperty('--timer-nav-height',navHeight+'px');
+    root.style.setProperty('--timer-nav-height',navHeight+'px');
+    panel.style.setProperty('--timer-content-top',top+'px');
+    panel.style.setProperty('--timer-setup-height',setupHeight+'px');
+    const gap=Math.max(12,Math.min(28,innerHeight*.03)),digitsHeight=digital.hidden?0:digital.getBoundingClientRect().height;
+    panel.classList.toggle('timer-scroll',timer.status==='idle'&&144+setupHeight+digitsHeight+gap*(digitsHeight?2:1)+32>innerHeight-top-navHeight);
   };
   alignClock();window.addEventListener('resize',alignClock);
-  let disposed=false, lock=null, attempted=false, lockEpoch=0, animation=null, drawnKey='';
+  const sizeObserver=typeof ResizeObserver==='function'?new ResizeObserver(alignClock):null;
+  for(const el of [document.querySelector('header'),document.querySelector('nav'),panel.querySelector('.timer-setup')])if(el)sizeObserver?.observe(el);
+  let disposed=false, lock=null, attempted=false, lockEpoch=0, animation=null, interval=null, drawnKey='';
   const wedge=panel.querySelector('.timer-wedge');
   function paintSector() {
     const fraction=remainingTime(timer)/(timer.minutes*60000);
@@ -109,6 +120,9 @@ export function mountTimer(root,getEstimatedMinutes=()=>0) {
     finishIfNeeded();
     paintReadout();
     updateLock();
+    const active=timer.status==='running'&&!document.hidden;
+    if(active&&interval===null)interval=setInterval(draw,1000);
+    else if(!active&&interval!==null){clearInterval(interval);interval=null;}
     if(timer.status==='running'&&!document.hidden&&animation===null)animation=requestAnimationFrame(animate);
     else if((timer.status!=='running'||document.hidden)&&animation!==null){cancelAnimationFrame(animation);animation=null;}
     const key=timer.status+':'+timer.minutes+':'+saveFailed+':'+settings.timerColor+':'+settings.showTimerDigits;
@@ -121,9 +135,10 @@ export function mountTimer(root,getEstimatedMinutes=()=>0) {
     panel.classList.toggle('timer-running',running);
     panel.classList.toggle('timer-show-digits',settings.showTimerDigits);
     paintSector();
-    panel.querySelectorAll('.timer-numbers span').forEach((el,i)=>{el.textContent=i===0?String(timer.minutes):String(i*timer.minutes/4)});
+    panel.querySelectorAll('.timer-numbers span').forEach((el,i)=>{el.textContent=formatDialTime((i||4)*timer.minutes/4)});
     panel.querySelector('.timer-setup').hidden=started;
     panel.querySelector('.timer-reset').hidden=timer.status!=='paused';
+    alignClock();
     const label=running?'타이머 일시정지':timer.status==='paused'?'타이머 재개':timer.status==='complete'?'시간 다시 설정':'타이머 시작';
     center.setAttribute('aria-label',label);
     center.innerHTML=running?pause:play;
@@ -152,6 +167,6 @@ export function mountTimer(root,getEstimatedMinutes=()=>0) {
     save();draw();
   };
   document.addEventListener('visibilitychange',draw);
-  draw();const interval=setInterval(draw,1000);
-  return ()=>{disposed=true;closeTimerColorPicker();clearInterval(interval);document.removeEventListener('visibilitychange',draw);window.removeEventListener('resize',alignClock);if(animation!==null)cancelAnimationFrame(animation);updateLock();};
+  draw();
+  return ()=>{disposed=true;closeTimerColorPicker();clearInterval(interval);document.removeEventListener('visibilitychange',draw);window.removeEventListener('resize',alignClock);sizeObserver?.disconnect();if(animation!==null)cancelAnimationFrame(animation);updateLock();};
 }
