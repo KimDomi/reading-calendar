@@ -7,8 +7,8 @@
 /* Extend the color face over half of each tick; keep labels outside the ring. */
 .timer-clock{--timer-ring-inset:clamp(8%,24px,13%)}
 .reading-timer .timer-sector,.reading-timer .timer-color-trigger{left:calc(var(--timer-ring-inset) + 2.5px);top:calc(var(--timer-ring-inset) + 2.5px);width:calc(100% - 2*var(--timer-ring-inset) - 5px);height:calc(100% - 2*var(--timer-ring-inset) - 5px)}
-.reading-timer .timer-ticks{inset:var(--timer-ring-inset);z-index:0}.reading-timer .timer-ticks i.major::before{top:-2px}
-.reading-timer .timer-sector{z-index:1;opacity:1}.reading-timer .timer-sector .timer-wedge{opacity:.75}.reading-timer .timer-color-trigger{z-index:2}.reading-timer .timer-numbers{z-index:3}.reading-timer .timer-clock .timer-center{z-index:4}
+.reading-timer .timer-ticks{inset:var(--timer-ring-inset);z-index:3}.reading-timer .timer-ticks i::before{height:8px}.reading-timer .timer-ticks i.major::before{top:0;height:12px}
+.reading-timer .timer-sector{z-index:1;opacity:1}.reading-timer .timer-sector .timer-wedge{opacity:.75}.reading-timer .timer-color-trigger{z-index:2}.reading-timer .timer-numbers{z-index:4}.reading-timer .timer-clock .timer-center{z-index:5}
 
 .color-swatch>.ui-icon{display:none;width:65%;height:65%;color:#fff;filter:drop-shadow(0 1px 2px #0008)}.color-swatch[aria-pressed=true]>.ui-icon{display:inline-block}html .color-swatch[aria-pressed=true]::after{content:none}
 
