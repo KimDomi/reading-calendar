@@ -595,7 +595,7 @@ html dialog { overscroll-behavior:contain; }
 /* Extra-large text on short screens can scroll without hiding controls under tabs. */
 main:has(>.reading-timer.timer-scroll) { padding-bottom:var(--timer-nav-height,100px); }
 
-.color-options { grid-template-columns:repeat(auto-fit,minmax(var(--touch-size),1fr)); gap:var(--space-3); }
+.color-options { grid-template-columns:repeat(var(--color-count,7),minmax(0,1fr)); gap:8px; }
 /* Quarter labels replace nearby marks before start; all marks return during use. */
 .reading-timer:not(.timer-started) .timer-ticks i:is(:nth-child(15n),:nth-child(15n + 1),:nth-child(15n + 2)) { visibility:hidden; }
 .timer-setup .timer-duration input { width:max(64px,calc(5ch + 20px)); }
