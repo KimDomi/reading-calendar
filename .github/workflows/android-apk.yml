@@ -103,6 +103,12 @@ jobs:
           if [ "$SHOULD_RELEASE" = "true" ]; then
             NOTES="독서 달력 Android v${VERSION_NAME} (빌드 ${VERSION_CODE})\n\nSHA-256: \`${SHA256}\`"
             if gh release view "$TAG_NAME" >/dev/null 2>&1; then
+              OLD_ASSETS=$(gh release view "$TAG_NAME" --json assets --jq '.assets[].name' | grep -E '\.(apk|sha256)$' || true)
+              for OLD in $OLD_ASSETS; do
+                if [ "$OLD" != "$APK_NAME" ] && [ "$OLD" != "${APK_NAME}.sha256" ]; then
+                  gh release delete-asset "$TAG_NAME" "$OLD" --yes || true
+                fi
+              done
               gh release upload "$TAG_NAME" "artifacts/${APK_NAME}" "artifacts/${APK_NAME}.sha256" "artifacts/latest.json" --clobber
             else
               printf "%b\n" "$NOTES" > "$RUNNER_TEMP/release-notes.md"
