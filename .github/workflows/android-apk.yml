@@ -83,17 +83,6 @@ jobs:
         if: steps.signing.outputs.signed != 'true'
         run: npm run android:debug
 
-      - name: Upload APK and checksum
-        uses: actions/upload-artifact@v4
-        with:
-          name: reading-calendar-android-apk
-          path: |
-            artifacts/*.apk
-            artifacts/*.sha256
-            artifacts/latest.json
-          if-no-files-found: error
-          retention-days: 14
-
       - name: Publish GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
@@ -122,3 +111,15 @@ jobs:
                 --notes-file "$RUNNER_TEMP/release-notes.md"
             fi
           fi
+
+      - name: Upload APK and checksum
+        continue-on-error: true
+        uses: actions/upload-artifact@v4
+        with:
+          name: reading-calendar-android-apk
+          path: |
+            artifacts/*.apk
+            artifacts/*.sha256
+            artifacts/latest.json
+          if-no-files-found: error
+          retention-days: 14
