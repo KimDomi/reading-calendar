@@ -636,6 +636,11 @@ main.is-tab-switching-prev > :not(.tab-switch-stage) { animation:tabViewInPrev v
   0% { transform:translate3d(-26px, 0, 0); opacity:0; }
   100% { transform:translate3d(0, 0, 0); opacity:1; }
 }
+.update-card .settings-title { display:flex; align-items:center; justify-content:space-between; gap:12px; padding-right:16px; }
+.app-version-label { font-variant-numeric:tabular-nums; }
+.update-progress { display:grid; gap:6px; margin:12px 0; }
+.update-progress .progress { border-radius:4px; overflow:hidden; height:6px; }
+.update-progress p { margin:0; }
 @media(prefers-reduced-motion:reduce) {
   .plan-group,.switch-thumb { transition:none; }
   .tab-switch-stage { display:none !important; }

@@ -12,7 +12,7 @@ async function run(initial,native=false){
  const mod=await load('app.js');await mod.link(spec=>load(spec.slice(2).split('?')[0]));await mod.evaluate();assert.ok(main.innerHTML.includes('class="grid"'));
  const click=dataset=>{for(const fn of handlers.click)fn({target:{closest:()=>({dataset})}})};
  click({tab:'plans'});assert.ok(main.innerHTML.includes('동시에 읽는 책'));assert.ok(!main.innerHTML.includes('data-action="backup"'));
- click({tab:'settings'});assert.ok(main.innerHTML.includes('내보내기 / 가져오기'));assert.equal(header.textContent,'설정');assert.equal((main.innerHTML.match(/data-action="backup"/g)||[]).length,1);
+ click({tab:'settings'});assert.ok(main.innerHTML.includes('내보내기 / 가져오기'));assert.equal(header.textContent,'설정');assert.equal((main.innerHTML.match(/data-action="backup"/g)||[]).length,1);assert.equal(main.innerHTML.includes('data-action="check-update"'),native);
  click({action:'backup'});assert.ok(modal.open);assert.ok(modal.innerHTML.includes('파일로 내보내기'));assert.equal(typeof file.onchange,'function');
  click({action:'close'});assert.ok(!modal.open);
  click({tab:'done'});assert.ok(main.innerHTML.includes('차곡차곡'));

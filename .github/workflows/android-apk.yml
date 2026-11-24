@@ -2,17 +2,24 @@ name: Build Android APK
 
 on:
   workflow_dispatch:
+    inputs:
+      publish_release:
+        description: "Publish APK as a GitHub Release"
+        type: boolean
+        default: true
   push:
     branches:
       - main
     paths:
       - ".github/workflows/android-apk.yml"
+      - "android/**"
       - "dist/**"
       - "package.json"
       - "package-lock.json"
+      - "scripts-android-artifact.mjs"
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:
@@ -47,15 +54,71 @@ jobs:
       - name: Run project checks
         run: npm run check
 
-      - name: Build debug APK
+      - name: Decode release keystore if configured
+        id: signing
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          if [ -n "$ANDROID_KEYSTORE_BASE64" ] && [ -n "$ANDROID_KEYSTORE_PASSWORD" ] && [ -n "$ANDROID_KEY_ALIAS" ] && [ -n "$ANDROID_KEY_PASSWORD" ]; then
+            echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/release.keystore"
+            echo "signed=true" >> "$GITHUB_OUTPUT"
+            echo "keystore_path=$RUNNER_TEMP/release.keystore" >> "$GITHUB_OUTPUT"
+          else
+            echo "signed=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build signed release APK
+        if: steps.signing.outputs.signed == 'true'
+        env:
+          ANDROID_KEYSTORE_PATH: ${{ steps.signing.outputs.keystore_path }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: npm run android:release
+
+      - name: Build debug APK (signing secrets not configured)
+        if: steps.signing.outputs.signed != 'true'
         run: npm run android:debug
 
       - name: Upload APK and checksum
         uses: actions/upload-artifact@v4
         with:
-          name: reading-calendar-android-debug
+          name: reading-calendar-android-apk
           path: |
             artifacts/*.apk
             artifacts/*.sha256
+            artifacts/latest.json
           if-no-files-found: error
           retention-days: 14
+
+      - name: Publish GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EVENT_NAME: ${{ github.event_name }}
+          DISPATCH_RELEASE: ${{ github.event.inputs.publish_release }}
+        run: |
+          TAG_NAME=$(node -p "JSON.parse(require('fs').readFileSync('artifacts/latest.json','utf8')).tagName")
+          VERSION_NAME=$(node -p "JSON.parse(require('fs').readFileSync('artifacts/latest.json','utf8')).versionName")
+          VERSION_CODE=$(node -p "JSON.parse(require('fs').readFileSync('artifacts/latest.json','utf8')).versionCode")
+          APK_NAME=$(node -p "JSON.parse(require('fs').readFileSync('artifacts/latest.json','utf8')).apkName")
+          SHA256=$(node -p "JSON.parse(require('fs').readFileSync('artifacts/latest.json','utf8')).sha256")
+          SHOULD_RELEASE="false"
+          if [ "$EVENT_NAME" = "workflow_dispatch" ] && [ "$DISPATCH_RELEASE" = "true" ]; then
+            SHOULD_RELEASE="true"
+          elif ! gh release view "$TAG_NAME" >/dev/null 2>&1; then
+            SHOULD_RELEASE="true"
+          fi
+          if [ "$SHOULD_RELEASE" = "true" ]; then
+            NOTES="독서 달력 Android v${VERSION_NAME} (빌드 ${VERSION_CODE})\n\nSHA-256: \`${SHA256}\`"
+            if gh release view "$TAG_NAME" >/dev/null 2>&1; then
+              gh release upload "$TAG_NAME" "artifacts/${APK_NAME}" "artifacts/${APK_NAME}.sha256" "artifacts/latest.json" --clobber
+            else
+              printf "%b\n" "$NOTES" > "$RUNNER_TEMP/release-notes.md"
+              gh release create "$TAG_NAME" "artifacts/${APK_NAME}" "artifacts/${APK_NAME}.sha256" "artifacts/latest.json" \
+                --title "독서 달력 v${VERSION_NAME}" \
+                --notes-file "$RUNNER_TEMP/release-notes.md"
+            fi
+          fi

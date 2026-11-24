@@ -1,6 +1,6 @@
 import {icon} from './icons.js?v=8fc4a110ec6b';
 import {normalizeRestDays} from './rest-days.js?v=270c12ac63f1';
-import {syncSystemBars,isNativeApp} from './native.js?v=bcb0856dfeee';
+import {syncSystemBars,isNativeApp} from './native.js?v=5aa2b7062fe9';
 const key = 'reading-calendar-settings-v1';
 export const DEFAULT_TIMER_COLOR='#7d9b8a';
 export const settings = {theme: 'system', notifications: false, notificationTime: '21:00',timerColor:DEFAULT_TIMER_COLOR,showTimerDigits:false};
@@ -51,5 +51,5 @@ export function settingsHTML(restDays = {}) {
     <form id="rest-date-form"><label class="field">날짜별 예외<input type="date" name="restDate" required aria-label="예외 날짜"></label><div class="rest-date-controls"><fieldset class="rest-mode"><legend class="sr-only">예외 유형</legend><label><input type="radio" name="restMode" value="rest" checked><span>이날은 쉬기</span></label><label><input type="radio" name="restMode" value="read"><span>이날은 읽기</span></label></fieldset><button type="submit" class="secondary">추가</button></div></form>
     <ul class="rest-date-list">${restDatesHTML(rest)}</ul>
   </div></details>
-  <section class="settings-card data-card"><div class="settings-title"><h2>독서 정보 관리</h2><button type="button" class="info-help" data-action="storagehelp" aria-label="독서 정보 저장 안내">?</button></div><div class="settings-content"><button type="button" class="secondary wide add" data-action="backup">독서 정보 내보내기 / 가져오기</button></div></section>`;
+  <section class="settings-card data-card"><div class="settings-title"><h2>독서 정보 관리</h2><button type="button" class="info-help" data-action="storagehelp" aria-label="독서 정보 저장 안내">?</button></div><div class="settings-content"><button type="button" class="secondary wide add" data-action="backup">독서 정보 내보내기 / 가져오기</button></div></section>${isNativeApp()?'<section class="settings-card data-card update-card"><div class="settings-title"><h2>앱 업데이트</h2><span class="small app-version-label" id="app-version-label"></span></div><div class="settings-content"><button type="button" class="secondary wide" data-action="check-update">최신 버전 확인</button></div></section>':''}`;
 }

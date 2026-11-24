@@ -11,7 +11,8 @@
     "deploy": "wrangler deploy",
     "android:sync": "node scripts-versions.mjs && cap sync android",
     "android:open": "cap open android",
-    "android:debug": "npm run android:sync && cd android && ./gradlew assembleDebug && node ../scripts-android-artifact.mjs"
+    "android:debug": "npm run android:sync && cd android && ./gradlew assembleDebug && node ../scripts-android-artifact.mjs",
+    "android:release": "npm run android:sync && cd android && ./gradlew assembleRelease && node ../scripts-android-artifact.mjs --release"
   },
   "devDependencies": {
     "@capacitor/cli": "8.6.0",
