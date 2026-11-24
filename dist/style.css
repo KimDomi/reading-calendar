@@ -588,6 +588,28 @@ html dialog { overscroll-behavior:contain; }
   .analog-time-picker .tp-digital { grid-template-columns:minmax(0,1fr) 10px minmax(0,1fr); }
   .analog-time-picker .tp-period { grid-column:1/-1; justify-self:center; min-width:112px; }
 }
+:root.is-theme-switching,
+:root.is-theme-switching *,
+:root.is-theme-switching *::before,
+:root.is-theme-switching *::after {
+  transition-property: background-color, border-color, color, fill, stroke, box-shadow !important;
+  transition-duration: 240ms !important;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1) !important;
+}
+.settings-card.appearance-card { padding:12px 16px; }
+.setting-row { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.setting-row .setting-label strong { font-size:1rem; font-weight:650; }
+.segmented { position:relative; display:inline-flex; align-items:center; flex-shrink:0; height:36px; background:var(--soft); padding:3px; border-radius:8px; border:1px solid var(--line); }
+.segmented button { position:relative; z-index:1; border:none; background:transparent; color:var(--muted); height:100%; padding:0 10px; border-radius:6px; display:inline-flex; align-items:center; justify-content:center; white-space:nowrap; transition:color 0.2s ease, transform 0.12s ease; }
+.segmented[data-segmented="theme"] button { width:36px; padding:0; }
+.segmented[data-segmented="theme"] button .ui-icon { width:17px; height:17px; }
+.segmented button.active { background:transparent; color:#fff; font-weight:600; }
+.segmented button.active::before { content:""; position:absolute; inset:0; border-radius:6px; background:var(--accent); z-index:-1; transform-origin:0 50%; will-change:transform; }
+.segmented button.active.is-sliding::before { animation:segmentedPillSlide 240ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+@keyframes segmentedPillSlide {
+  0% { transform:translate3d(var(--seg-dx, 0px), 0, 0) scaleX(var(--seg-sx, 1)); }
+  100% { transform:translate3d(0, 0, 0) scaleX(1); }
+}
 @media(prefers-reduced-motion:reduce) {
   .plan-group,.switch-thumb { transition:none; }
 }
