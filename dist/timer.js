@@ -1,6 +1,6 @@
 import {icon} from './icons.js?v=8fc4a110ec6b';
 import {screenLockAvailable,requestScreenLock} from './native.js?v=5aa2b7062fe9';
-import {settings,updateSetting,DEFAULT_TIMER_COLOR} from './settings.js?v=061c2e81282e';
+import {settings,updateSetting,DEFAULT_TIMER_COLOR} from './settings.js?v=c6469aaa0e0a';
 import {openTimerColorPicker,closeTimerColorPicker} from './timer-color-picker.js?v=a8487b6ddbf4';
 export {closeTimerColorPicker};
 const storageKey = 'reading-calendar-timer-v1';

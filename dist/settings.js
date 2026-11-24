@@ -17,7 +17,7 @@ const system = typeof matchMedia === 'function' ? matchMedia('(prefers-color-sch
 export function applyTheme() {
   if (!globalThis.document?.documentElement) return;
   document.documentElement.dataset.theme = settings.theme === 'system' ? (system?.matches ? 'dark' : 'light') : settings.theme;
-  document.querySelector('meta[name="theme-color"]')?.setAttribute('content',document.documentElement.dataset.theme==='dark'?'#1c1c1e':'#fafafa');
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content',document.documentElement.dataset.theme==='dark'?'#1c1c1e':'#f0f0f2');
   syncSystemBars(document.documentElement.dataset.theme);
 }
 system?.addEventListener('change', applyTheme);
