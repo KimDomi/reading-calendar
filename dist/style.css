@@ -7,11 +7,12 @@
   --dialog-shadow:0 24px 90px #20202425;
 }
 :root { font-family:system-ui,-apple-system,'Noto Sans KR',sans-serif; color:#303034; background:#f0f0f2; font-synthesis:none; --accent:#6f6f78; --muted:#777780; --line:#e2e2e6; }
-* { box-sizing:border-box; }
+* { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 html { scrollbar-gutter:stable; }
 html,body { margin:0; overflow-x:hidden; overflow-x:clip; }
 button,input,select { font:inherit; }
-button { cursor:pointer; color:inherit; border:0; background:none; }
+button { cursor:pointer; color:inherit; border:0; background:none; user-select:none; -webkit-user-select:none; }
+.settings-section>summary,.choice-options span,.rest-mode span,.rest-holidays { user-select:none; -webkit-user-select:none; }
 button:focus-visible,input:focus-visible,select:focus-visible { outline:3px solid #a6a6b0; outline-offset:3px; }
 .app { max-width:520px; min-height:100dvh; margin:auto; background:#fafafa; border-inline:1px solid var(--line); position:relative; overflow-x:clip; }
 header { min-height:56px; padding:14px 60px; text-align:center; position:relative; border-bottom:1px solid var(--line); }
