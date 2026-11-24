@@ -58,9 +58,9 @@ function allocateQueue(books, start, restDays = {}) {
 export function allocate(books, start, restDays) { return allocateQueue(books, start, restDays); }
 export function allocateMixed(books, start, restDays) { return allocateQueue(books, start, restDays); }
 
-export function recalc(state, ids, today, start = today) {
+export function recalc(state, ids, today, start = today, clearFrom = start) {
   const affected = new Set(ids);
-  state.alloc = state.alloc.filter(row => !affected.has(row.id) || row.date < start);
+  state.alloc = state.alloc.filter(row => !affected.has(row.id) || row.date < clearFrom);
   const active = state.books.filter(book => affected.has(book.id) && book.status === 'active' && (isDaily(book) || book.deadline >= start));
   const append = rows => { for (const row of rows) state.alloc.push(row); };
   for (const book of active) if (book.mode === 'parallel') append(allocateMixed([book], start, state.restDays));
@@ -76,9 +76,12 @@ export function deadlineMisses(books, allocations) {
 }
 
 // Validate the entire confirmation batch before changing any saved progress.
-export function recordMany(state, changes, today) {
+export function recordMany(state, changes, today, options = {}) {
+  const zeroMode = options?.zeroMode === 'from-today' ? 'from-today' : 'skip-today';
   const byId = new Map(state.books.map(book => [book.id, book]));
-  const seen = new Set(), affected = new Set();
+  const seen = new Set();
+  const parallelToday = new Set(), parallelTomorrow = new Set(), parallelClearToday = new Set();
+  let sequenceChanged = false, sequenceHasProgress = false;
   for (const {id, page} of changes) {
     const book = byId.get(id);
     if (!book || seen.has(id) || book.status === 'done' || !Number.isInteger(page) || page < book.page || page > book.total) {
@@ -86,20 +89,36 @@ export function recordMany(state, changes, today) {
     }
     seen.add(id);
   }
-  let sequenceChanged = false;
   for (const {id, page} of changes) {
     const book = byId.get(id);
-    state.records.push({id, date: today, delta: page - book.page, page});
+    const delta = page - book.page;
+    state.records.push({id, date: today, delta, page});
     book.page = page;
     book.confirmed = today;
     if (page === book.total) { book.status = 'done'; book.finished = today; }
-    affected.add(id);
-    sequenceChanged ||= book.mode === 'sequence';
+    if (book.mode === 'sequence') {
+      sequenceChanged = true;
+      if (delta > 0) sequenceHasProgress = true;
+    } else if (delta > 0) {
+      parallelTomorrow.add(id);
+    } else if (zeroMode === 'from-today') {
+      parallelToday.add(id);
+    } else {
+      parallelClearToday.add(id);
+    }
   }
-  if (sequenceChanged) for (const book of state.books) if (book.mode === 'sequence') affected.add(book.id);
-  if (affected.size) recalc(state, [...affected], today, add(today, 1));
+  const tomorrow = add(today, 1);
+  if (parallelToday.size) recalc(state, [...parallelToday], today, today, today);
+  if (parallelTomorrow.size) recalc(state, [...parallelTomorrow], today, tomorrow, tomorrow);
+  if (parallelClearToday.size) recalc(state, [...parallelClearToday], today, tomorrow, today);
+  if (sequenceChanged) {
+    const seqIds = state.books.filter(book => book.mode === 'sequence').map(book => book.id);
+    if (sequenceHasProgress) recalc(state, seqIds, today, tomorrow, tomorrow);
+    else if (zeroMode === 'from-today') recalc(state, seqIds, today, today, today);
+    else recalc(state, seqIds, today, tomorrow, today);
+  }
 }
-export function record(state, id, page, today) { recordMany(state, [{id, page}], today); }
+export function record(state, id, page, today, options) { recordMany(state, [{id, page}], today, options); }
 
 export function graph(records, id) {
   const totals = new Map();

@@ -1,4 +1,4 @@
-import {recalc} from './engine.js?v=cab576a36d57';
+import {recalc} from './engine.js?v=a1f0b074ec04';
 import {normalizeRestDays} from './rest-days.js?v=270c12ac63f1';
 const date=x=>typeof x==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(x)&&!Number.isNaN(Date.parse(x+'T12:00:00Z'))&&new Date(x+'T12:00:00Z').toISOString().slice(0,10)===x;
 const integer=(x,min,max)=>Number.isInteger(x)&&x>=min&&x<=max;

@@ -27,4 +27,18 @@ const {recordMany}=await import('./dist/engine.js');
 let batch={books:[{...A,id:'batch-a'},{...B,id:'batch-b'}],records:[],alloc:[]};recalc(batch,['batch-a','batch-b'],'2026-10-09');let unchanged=JSON.stringify(batch);assert.throws(()=>recordMany(batch,[{id:'batch-a',page:20},{id:'batch-b',page:999}],'2026-10-09'));assert.equal(JSON.stringify(batch),unchanged);recordMany(batch,[{id:'batch-a',page:20},{id:'batch-b',page:30}],'2026-10-09');assert.equal(batch.records.length,2);assert.equal(batch.alloc.filter(a=>a.date>'2026-10-09').reduce((s,a)=>s+a.n,0),450);
 assert.throws(()=>recordMany(batch,[{id:'batch-a',page:20},{id:'batch-a',page:30}],'2026-10-09'));
 let longGap=graph([{id:'long',date:'2000-01-01',delta:10},{id:'long',date:'2026-10-13',delta:20}],'long');assert.equal(longGap.length,3);assert.ok(longGap[1].gap>9000);
-console.log('PASS: atomic multi-book confirmation, retained totals, long graph gap compression');
+// Confirming "모두 안 읽었어요" after missed days recalculates today's stale allocation from current page.
+let missed={books:[{...A,id:'m1',total:100,deadline:'2026-10-18',mode:'sequence',order:0},{...B,id:'m2',total:60,deadline:'2026-10-18',mode:'parallel',order:1}],records:[],alloc:[]};
+recalc(missed,['m1','m2'],'2026-10-09');
+assert.ok(missed.alloc.find(a=>a.id==='m1'&&a.date==='2026-10-12').from>1);
+recordMany(missed,[{id:'m1',page:0},{id:'m2',page:0}],'2026-10-12',{zeroMode:'from-today'});
+assert.equal(missed.alloc.find(a=>a.id==='m1'&&a.date==='2026-10-12').from,1);
+assert.equal(missed.alloc.find(a=>a.id==='m2'&&a.date==='2026-10-12').from,1);
+assert.equal(missed.alloc.filter(a=>a.id==='m1'&&a.date>='2026-10-12').reduce((s,a)=>s+a.n,0),100);
+assert.equal(missed.alloc.filter(a=>a.id==='m2'&&a.date>='2026-10-12').reduce((s,a)=>s+a.n,0),60);
+// Confirming "오늘은 안 읽음" clears today's stale allocation and resumes tomorrow.
+record(missed,'m1',0,'2026-10-13');
+assert.equal(missed.alloc.some(a=>a.id==='m1'&&a.date==='2026-10-13'),false);
+assert.equal(missed.alloc.find(a=>a.id==='m1'&&a.date==='2026-10-14').from,1);
+assert.equal(missed.alloc.filter(a=>a.id==='m1'&&a.date>'2026-10-13').reduce((s,a)=>s+a.n,0),100);
+console.log('PASS: atomic multi-book confirmation, retained totals, long graph gap compression, missed-days zero confirmation');
