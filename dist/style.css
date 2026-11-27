@@ -21,7 +21,7 @@ h2 { font-size:1.25rem; margin:0; }
 h3 { font-size:0.875rem; margin:26px 0 12px; }
 .help { position:absolute; right:12px; top:6px; width:44px; height:44px; display:grid; place-items:center; font-size:0.875rem; }
 .help::before { content:""; position:absolute; inset:9px; border:1px solid var(--line); border-radius:50%; }
-main { padding:16px 22px calc(var(--bottom-nav-height,65px) + 26px); }
+main { padding:16px 22px calc(var(--bottom-nav-height,75px) + 26px); }
 nav { position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:min(520px,100%); border-top:1px solid var(--line); display:flex; padding:10px 12px max(12px,env(safe-area-inset-bottom)); z-index:5; backdrop-filter:blur(12px); }
 nav button { flex:1; color:var(--muted); font-size:0.75rem; padding:var(--space-1); }
 nav span { display:block; font-size:1.5rem; line-height:1.875rem; margin-bottom:var(--space-1); }
@@ -78,7 +78,7 @@ input[type=color] { padding:3px; height:44px; }
 .menuitem { display:block; text-align:left; width:100%; padding:15px 5px; border-bottom:1px solid var(--line); }
 .danger { color:var(--danger); }
 .cancel { padding:var(--space-3); width:100%; color:var(--muted); margin-top:var(--space-1); }
-#toast { position:fixed; bottom:calc(var(--bottom-nav-height,65px) + 16px); left:50%; transform:translateX(-50%); background:var(--selection-bg); color:var(--text); font-size:0.8125rem; z-index:20; display:none; }
+#toast { position:fixed; bottom:calc(var(--bottom-nav-height,75px) + 16px); left:50%; transform:translateX(-50%); background:var(--selection-bg); color:var(--text); font-size:0.8125rem; z-index:20; display:none; }
 #toast button { margin-left:10px; }
 .heading { margin-bottom:var(--space-5); }
 .count { font-weight:400; font-size:0.75rem; color:var(--muted); margin-left:5px; }
@@ -303,7 +303,7 @@ html #toast button:focus-visible { outline-color:var(--accent); }
 .rest-date-list button { color:var(--muted); min-height:40px; padding:var(--space-2); }
 .rest-label { font-size:0.5625rem; line-height:1.2; color:var(--muted); }
 .day-rest:not(.selected) { border:1px dashed var(--line); }
-.reading-timer { --timer-nav-height:65px; }
+.reading-timer { --timer-nav-height:75px; }
 .timer-started .timer-clock { position:fixed; left:50%; top:var(--timer-center-y); transform:translate(-50%,-50%); width:var(--timer-diameter); margin:0; }
 .reading-timer.timer-started .timer-reset { position:fixed; left:50%; top:calc(var(--timer-center-y) + var(--timer-diameter)/2 + 36px); transform:translateX(-50%); margin:0; }
 .reading-timer.timer-started .timer-status:not(.sr-only) { position:fixed; left:50%; top:calc(var(--timer-center-y) + var(--timer-diameter)/2 + 16px); transform:translateX(-50%); width:calc(100% - 44px); margin:0; }
@@ -644,10 +644,10 @@ main:has(>.reading-timer.timer-scroll) { padding-bottom:var(--timer-nav-height,1
 .reading-timer:not(.timer-started) .timer-ticks i:is(:nth-child(15n),:nth-child(15n + 1),:nth-child(15n + 2)) { visibility:hidden; }
 .timer-setup .timer-duration input { width:max(64px,calc(5ch + 20px)); }
 
-/* 상단/하단 탭 높이 65px 고정 */
+/* 상단 65px, 하단 75px 고정 */
 html header, html .app:has(nav [data-tab="plans"].active)>header { box-sizing:border-box; height:65px; min-height:65px; padding-block:0; display:flex; align-items:center; justify-content:center; }
 html .app:has(nav [data-tab="calendar"].active)>header { display:none; }
-html nav { box-sizing:content-box; height:65px; min-height:65px; padding-top:0; padding-bottom:env(safe-area-inset-bottom); align-items:center; }
+html nav { box-sizing:content-box; height:75px; min-height:75px; padding-top:0; padding-bottom:env(safe-area-inset-bottom); align-items:center; }
 html nav button { padding-block:0; }
 html nav span { margin-bottom:2px; }
 html .header-new { top:12px; }
